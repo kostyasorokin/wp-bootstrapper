@@ -2,8 +2,10 @@
 /**
  * Class:  Backend
  *
- * @author Konstantin Sorokin
- * @link   https://konstantinsorokin.com
+ * @package    WP_Bootstrapper
+ * @subpackage Backend
+ * @author     Konstantin Sorokin
+ * @link       https://konstantinsorokin.com
  */
 
 namespace WPB;

@@ -7,7 +7,7 @@
  * Based on: https://github.com/WPArtisan/wpartisan-filename-sanitizer
  *
  * @package    WP_Bootstrapper
- * @subpackage Media
+ * @subpackage Files
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */

@@ -1,6 +1,6 @@
 # WP Bootstrapper
 
-![Code Quality](https://github.com/kostyasorokin/wc-regional-catalog/actions/workflows/code-quality.yml/badge.svg)
+![Code Quality](https://github.com/kostyasorokin/wp-bootstrapper/actions/workflows/code-quality.yml/badge.svg)
 ![PHP Version](https://img.shields.io/badge/PHP-8.4+-blue.svg)
 ![WordPress](https://img.shields.io/badge/WordPress-6.7+-23282d.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-green.svg)

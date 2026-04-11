@@ -2,8 +2,10 @@
 /**
  * Class: Head
  *
- * @author Konstantin Sorokin
- * @link   https://konstantinsorokin.com
+ * @package    WP_Bootstrapper
+ * @subpackage Head
+ * @author     Konstantin Sorokin
+ * @link       https://konstantinsorokin.com
  */
 
 namespace WPB;
