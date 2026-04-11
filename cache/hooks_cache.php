@@ -62,26 +62,33 @@ return array (
   array (
     0 => 
     array (
-      'hook' => 'wp_default_scripts',
-      'method' => 'disable_jquery_migrate',
-      'priority' => 10,
+      'hook' => 'wp_enqueue_scripts',
+      'method' => 'jquery',
+      'priority' => 100,
       'args' => 1,
     ),
     1 => 
     array (
-      'hook' => 'init',
-      'method' => 'oembed_full',
+      'hook' => 'wp_default_scripts',
+      'method' => 'jquery_migrate',
       'priority' => 10,
       'args' => 1,
     ),
     2 => 
     array (
       'hook' => 'init',
+      'method' => 'oembed_full',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    3 => 
+    array (
+      'hook' => 'init',
       'method' => 'stopHeartbeat',
       'priority' => 1,
       'args' => 1,
     ),
-    3 => 
+    4 => 
     array (
       'hook' => 'script_loader_tag',
       'method' => 'set_async_defer_attribute',

@@ -19,16 +19,33 @@ defined( 'ABSPATH' ) || exit;
 class JavaScript {
 
     /**
-     * Removes jQuery Migrate from the jQuery dependencies.
+     * jQuery & jQuery Core
+     * This may break plugins that rely on jQuery (e.g., Contact Form 7, WooCommerce).
+     */
+    #[Hook( 'wp_enqueue_scripts', priority: 100 )]
+    public function jquery(): void {
+        // Never disable it in the admin panel, otherwise it will stop working
+        if ( is_admin() ) {
+            return;
+        }
+
+        if ( ! Options::is( 'jquery', true ) ) {
+            wp_deregister_script( 'jquery' );
+            wp_deregister_script( 'jquery-core' );
+        }
+    }
+
+    /**
+     * jQuery Migrate
      *
      * @param WP_Scripts $scripts The WP_Scripts instance (passed by reference).
      *
      * @return void
      */
     #[Hook( 'wp_default_scripts' )]
-    public function disable_jquery_migrate( WP_Scripts $scripts ): void {
+    public function jquery_migrate( WP_Scripts $scripts ): void {
         // Only target front-end and check if the feature is enabled.
-        if ( is_admin() || Options::is( 'jquery_migrate' ) ) {
+        if ( is_admin() || Options::is( 'jquery_migrate', true ) ) {
             return;
         }
 

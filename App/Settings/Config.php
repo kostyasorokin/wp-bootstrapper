@@ -49,11 +49,17 @@ class Config {
                     ] );
                 } );
                 $tab->addSection( 'system_javascript', __( 'JavaScript', 'wp-bootstrapper' ), '', function ( Section $section ) {
+                    $section->addField( 'jquery', FieldType::CHECKBOX, [
+                        'label'          => 'jquery.min.js',
+                        'label_checkbox' => 'jQuery',
+                        'description'    => __( 'Warning: Removes jQuery from the frontend. Only use this if your theme and plugins do not rely on jQuery. This will significantly improve PageSpeed, but might break things.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
                     $section->addField( 'jquery_migrate', FieldType::CHECKBOX, [
                         'label'          => 'jquery-migrate.js',
-                        'label_checkbox' => __( 'jQuery Migrate script', 'wp-bootstrapper' ),
-                        'description'    => __( 'Enable/Disable the migration layer for jQuery. Warning: This may break very old themes or plugins that rely on deprecated jQuery functions.', 'wp-bootstrapper' ),
-                        'default'        => false,
+                        'label_checkbox' => 'jQuery Migrate',
+                        'description'    => __( 'The migration layer for jQuery. Warning: This may break very old themes or plugins that rely on deprecated jQuery functions.', 'wp-bootstrapper' ),
+                        'default'        => true,
                     ] );
                     $section->addField( 'oembed_full', FieldType::CHECKBOX, [
                         'label'          => 'oEmbed API',
@@ -63,7 +69,7 @@ class Config {
                     ] );
                     $section->addField( 'heartbeat_api', FieldType::CHECKBOX, [
                         'label'          => 'Heartbeat API',
-                        'label_checkbox' => __( 'Heartbeat API', 'wp-bootstrapper' ),
+                        'label_checkbox' => 'Heartbeat API',
                         'description'    => __( 'The Heartbeat API script (wp-heartbeat.min.js). This saves server resources but disables features like auto-saving and post-lock notifications.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
@@ -88,7 +94,7 @@ class Config {
             ->addTab( 'admin', __( 'Admin', 'wp-bootstrapper' ), function ( Tab $tab ) {
                 $tab->addSection( 'admin_cleanup', '', '', function ( Section $section ) {
                     $section->addField( 'disable_admin_bar_menu_logo', FieldType::CHECKBOX, [
-                        'label'          => __( 'admin_bar_menu', 'wp-bootstrapper' ),
+                        'label'          => 'admin_bar_menu',
                         'label_checkbox' => __( 'Removes the WordPress logo from the admin bar', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] )
