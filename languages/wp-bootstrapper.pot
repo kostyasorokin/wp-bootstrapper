@@ -1,0 +1,179 @@
+# Copyright (C) 2026 Konstantin Sorokin
+# This file is distributed under the GPL v3 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: WP Bootstrapper 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-bootstrapper\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-04-11T17:09:43+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: wp-bootstrapper\n"
+
+#. Plugin Name of the plugin
+#: wp-bootstrapper.php
+msgid "WP Bootstrapper"
+msgstr ""
+
+#. Description of the plugin
+#: wp-bootstrapper.php
+msgid "Foundational set of tools to initialize and optimize WordPress."
+msgstr ""
+
+#. Author of the plugin
+#: wp-bootstrapper.php
+msgid "Konstantin Sorokin"
+msgstr ""
+
+#. Author URI of the plugin
+#: wp-bootstrapper.php
+msgid "https://konstantinsorokin.com"
+msgstr ""
+
+#: App/Cron.php:33
+msgid "Every month"
+msgstr ""
+
+#: App/Cron.php:37
+msgid "Every three months"
+msgstr ""
+
+#: App/Cron.php:41
+msgid "Semiannually"
+msgstr ""
+
+#: App/Cron.php:45
+msgid "Yearly"
+msgstr ""
+
+#: App/Settings/Config.php:40
+msgid "Bootstrapper"
+msgstr ""
+
+#: App/Settings/Config.php:42
+msgid "System"
+msgstr ""
+
+#: App/Settings/Config.php:43
+msgid "Cron"
+msgstr ""
+
+#: App/Settings/Config.php:46
+msgid "Disable WordPress Virtual Cron"
+msgstr ""
+
+#: App/Settings/Config.php:47
+msgid "Disables wp-cron.php execution on every page load. Recommended if you have a real system cron job configured."
+msgstr ""
+
+#: App/Settings/Config.php:51
+msgid "JavaScript"
+msgstr ""
+
+#: App/Settings/Config.php:54
+msgid "jQuery Migrate script"
+msgstr ""
+
+#: App/Settings/Config.php:55
+msgid "Enable/Disable the migration layer for jQuery. Warning: This may break very old themes or plugins that rely on deprecated jQuery functions."
+msgstr ""
+
+#: App/Settings/Config.php:59
+msgid "Media"
+msgstr ""
+
+#: App/Settings/Config.php:62
+msgid "Disable automatic scaling of large images"
+msgstr ""
+
+#: App/Settings/Config.php:63
+msgid "When enabled, WordPress will not downscale images larger than 2560px."
+msgstr ""
+
+#: App/Settings/Config.php:67
+msgid "Files"
+msgstr ""
+
+#: App/Settings/Config.php:70
+msgid "Disable File Modifications"
+msgstr ""
+
+#: App/Settings/Config.php:71
+msgid "Completely disables the built-in WordPress theme and plugin editor, as well as the ability to update or install new plugins and themes from the admin dashboard. Highly recommended for production sites."
+msgstr ""
+
+#: App/Settings/Config.php:76
+msgid "Admin"
+msgstr ""
+
+#: App/Settings/Config.php:79
+msgid "admin_bar_menu"
+msgstr ""
+
+#: App/Settings/Config.php:80
+msgid "Removes the WordPress logo from the admin bar"
+msgstr ""
+
+#: App/Settings/Config.php:85
+msgid "Remove the Welcome Panel"
+msgstr ""
+
+#: App/Settings/Config.php:86
+msgid "Hides the \"Welcome to WordPress\" box from the dashboard."
+msgstr ""
+
+#: App/Settings/Config.php:91
+msgid "Remove \"Thank you for creating with WordPress\" text"
+msgstr ""
+
+#: App/Settings/Config.php:96
+msgid "Remove WordPress version from the footer"
+msgstr ""
+
+#: App/Settings/Config.php:101
+msgid "Head"
+msgstr ""
+
+#: App/Settings/Config.php:105
+msgid "Removes the WordPress version tag"
+msgstr ""
+
+#: App/Settings/Config.php:110
+msgid "Removes RSD (Really Simple Discovery) link"
+msgstr ""
+
+#: App/Settings/Config.php:115
+msgid "Removes Windows Live Writer manifest link"
+msgstr ""
+
+#: App/Settings/Config.php:120
+msgid "Removes the short link for the current page"
+msgstr ""
+
+#: App/Settings/Config.php:121
+msgid "Removes rel=\"shortlink\" from the &lt;head&gt; and the Link header from server responses."
+msgstr ""
+
+#: App/Settings/Config.php:126
+msgid "Removes REST API output link"
+msgstr ""
+
+#: App/Settings/Config.php:131
+msgid "Removes oEmbed discovery links"
+msgstr ""
+
+#: App/Settings/Config.php:136
+msgid "Cookies"
+msgstr ""
+
+#: App/Settings/Config.php:140
+msgid "Sets a cookie named \"origin\" for non-admin visitors if it hasn’t been set yet"
+msgstr ""
+
+#: wp-bootstrapper.php:67
+msgid "WP Bootstrapper: Please run \"composer install\" in the plugin directory to activate it."
+msgstr ""

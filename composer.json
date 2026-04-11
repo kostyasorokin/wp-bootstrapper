@@ -1,0 +1,26 @@
+{
+  "name": "kostyasorokin/wp-bootstrapper",
+  "description": "The ultimate foundation for WordPress projects. Provides a clean suite of tools for head cleanup, security tweaks, and admin customizations through an elegant interface.",
+  "type": "wordpress-plugin",
+  "license": "GPL-3.0-or-later",
+  "config": {
+    "optimize-autoloader": true,
+    "classmap-authoritative": true
+  },
+  "autoload": {
+    "psr-4": {
+      "WPB\\": "App/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Konstantin Sorokin",
+      "email": "hello@konstantinsorokin.com",
+      "homepage": "https://konstantinsorokin.com/",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=8.4"
+  }
+}

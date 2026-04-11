@@ -1,0 +1,42 @@
+{
+  "name": "wp-bootstrapper",
+  "version": "1.0.0",
+  "description": "A high-performance, attribute-driven foundation for WordPress. Streamlines site optimization, security hardening, and admin UI cleanup via a modern PHP 8.4+ architecture.",
+  "homepage": "https://github.com/kostyasorokin/wp-bootstrapper#readme",
+  "license": "GPL-3.0-or-later",
+  "author": {
+    "name": "Konstantin Sorokin",
+    "email": "hello@konstantinsorokin.com",
+    "url": "https://konstantinsorokin.com/"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "keywords": [
+    "wordpress",
+    "wp-performance",
+    "php-attributes",
+    "security-hardening",
+    "headless-wp",
+    "optimization",
+    "boilerplate"
+  ],
+  "scripts": {
+    "i18n:pot": "wp i18n make-pot . languages/wp-bootstrapper.pot --domain=wp-bootstrapper --exclude=vendor,node_modules,cache",
+    "i18n:mo:ru": "msgfmt --check --strict languages/wp-bootstrapper-ru_RU.po -o languages/wp-bootstrapper-ru_RU.mo",
+    "i18n:mo:uk": "msgfmt --check --strict languages/wp-bootstrapper-uk_UA.po -o languages/wp-bootstrapper-uk_UA.mo",
+    "i18n:build": "npm run i18n:mo:ru && npm run i18n:mo:uk",
+    "cache:clear": "rm -rf cache/*.php"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kostyasorokin/wp-bootstrapper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/kostyasorokin/wp-bootstrapper/issues",
+    "email": "hello@konstantinsorokin.com"
+  },
+  "private": true
+}
