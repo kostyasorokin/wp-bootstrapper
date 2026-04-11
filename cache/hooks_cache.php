@@ -67,6 +67,23 @@ return array (
       'priority' => 10,
       'args' => 1,
     ),
+    1 => 
+    array (
+      'hook' => 'init',
+      'method' => 'disable_oembed_full',
+      'priority' => 10,
+      'args' => 1,
+    ),
+  ),
+  'WPB\\Users' => 
+  array (
+    0 => 
+    array (
+      'hook' => 'user_contactmethods',
+      'method' => 'updateContactMethods',
+      'priority' => 10,
+      'args' => 1,
+    ),
   ),
   'WPB\\Cron' => 
   array (

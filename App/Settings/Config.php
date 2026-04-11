@@ -55,6 +55,12 @@ class Config {
                         'description'    => __( 'Enable/Disable the migration layer for jQuery. Warning: This may break very old themes or plugins that rely on deprecated jQuery functions.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
+                    $section->addField( 'disable_oembed_full', FieldType::CHECKBOX, [
+                        'label'          => 'oEmbed API',
+                        'label_checkbox' => __( 'Completely disable oEmbed features', 'wp-bootstrapper' ),
+                        'description'    => __( 'Removes wp-embed.min.js, discovery links (REST API/XML-RPC), and API routes. This saves one HTTP request and prevents external sites from embedding your content.', 'wp-bootstrapper' ),
+                        'default'        => false,
+                    ] );
                 } );
                 $tab->addSection( 'system_media', __( 'Media', 'wp-bootstrapper' ), '', function ( Section $section ) {
                     $section->addField( 'big_image_size_threshold', FieldType::CHECKBOX, [
@@ -119,16 +125,6 @@ class Config {
                                 'label'          => 'wp_shortlink',
                                 'label_checkbox' => __( 'Removes the short link for the current page', 'wp-bootstrapper' ),
                                 'description'    => __( 'Removes rel="shortlink" from the &lt;head&gt; and the Link header from server responses.', 'wp-bootstrapper' ),
-                                'default'        => true,
-                            ] )
-                            ->addField( 'disable_rest_output_link', FieldType::CHECKBOX, [
-                                'label'          => 'rest_output_link',
-                                'label_checkbox' => __( 'Removes REST API output link', 'wp-bootstrapper' ),
-                                'default'        => true,
-                            ] )
-                            ->addField( 'disable_oembed_discovery', FieldType::CHECKBOX, [
-                                'label'          => 'oEmbed discovery',
-                                'label_checkbox' => __( 'Removes oEmbed discovery links', 'wp-bootstrapper' ),
                                 'default'        => true,
                             ] );
                 } );

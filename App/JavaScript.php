@@ -45,4 +45,33 @@ class JavaScript {
         }
     }
 
+    /**
+     * Completely disables oEmbed functionality (scripts, links, and API).
+     * * Even though this removes discovery links (HTML), we keep it here
+     * to have a single "oEmbed killer" method alongside JS optimizations.
+     */
+    #[Hook( 'init' )]
+    public function disable_oembed_full(): void {
+        // If the checkbox is NOT checked, we do nothing and return.
+        if ( ! Options::is( 'disable_oembed_full', false ) ) {
+            return;
+        }
+
+        // 1. Stop the host JS (wp-embed.min.js) from loading in the footer/head
+        remove_action( 'wp_head', 'wp_oembed_add_host_js' );
+
+        // 2. Remove oEmbed discovery links (REST API & XML-RPC)
+        remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
+        remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
+
+        // 3. Disable the oEmbed-specific REST API routes
+        remove_action( 'rest_api_init', 'wp_oembed_register_route' );
+
+        // 4. Disable oEmbed discovery for external content
+        add_filter( 'embed_oembed_discover', '__return_false' );
+
+        // 5. Remove the filter that attempts to parse oEmbed results
+        remove_filter( 'pre_oembed_result', 'wp_filter_pre_oembed_result', 10 );
+    }
+
 }

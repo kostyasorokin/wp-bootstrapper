@@ -40,12 +40,6 @@ class Head {
             remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
             remove_action( 'template_redirect', 'wp_shortlink_header', 11 );
         }
-
-        // Removes references to REST API
-        Options::is( 'disable_rest_output_link', true ) && remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
-
-        // Removes oEmbed discovery links
-        Options::is( 'disable_oembed_discovery', true ) && remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
     }
 
 }
