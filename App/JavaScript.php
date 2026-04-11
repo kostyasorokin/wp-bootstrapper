@@ -124,6 +124,7 @@ class JavaScript {
         $async_scripts = [ 'main', 'index', 'wp-embed' ];
 
         if ( in_array( $handle, $async_scripts, true ) ) {
+            // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Modifying existing script tag.
             return sprintf(
                 '<script async defer src="%s" id="%s-js"></script>' . "\n",
                 esc_url( $src ),

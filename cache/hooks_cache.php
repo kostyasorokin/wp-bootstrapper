@@ -58,6 +58,16 @@ return array (
       'args' => 1,
     ),
   ),
+  'WPB\\Theme' => 
+  array (
+    0 => 
+    array (
+      'hook' => 'get_the_archive_title',
+      'method' => 'clean_archive_title',
+      'priority' => 10,
+      'args' => 1,
+    ),
+  ),
   'WPB\\JavaScript' => 
   array (
     0 => 

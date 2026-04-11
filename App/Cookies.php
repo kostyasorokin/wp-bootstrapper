@@ -41,7 +41,9 @@ class Cookies {
 
         // Check if headers have already been sent
         if ( headers_sent() ) {
-            error_log( "WP Bootstrapper: Unable to set cookie 'origin', headers already sent." );
+            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+                error_log( 'WP Bootstrapper: Headers already sent, "origin" cookie skipped.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log.error_log_found
+            }
             return;
         }
 

@@ -91,7 +91,7 @@ final class Manager {
         }
 
         // Prepare the file content with security check and exported array
-        $export  = var_export( $hooksConfig, true );
+        $export  = var_export( $hooksConfig, true ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_export
         $content = "<?php" . PHP_EOL;
         $content .= "/**" . PHP_EOL;
         $content .= " * Generated Hook Cache" . PHP_EOL;
