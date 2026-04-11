@@ -50,6 +50,13 @@ return array (
       'priority' => 10,
       'args' => 1,
     ),
+    2 => 
+    array (
+      'hook' => 'upload_mimes',
+      'method' => 'svg_svgz_support',
+      'priority' => 10,
+      'args' => 1,
+    ),
   ),
   'WPB\\JavaScript' => 
   array (

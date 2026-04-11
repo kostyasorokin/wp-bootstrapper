@@ -78,4 +78,21 @@ class Files {
         return (string) apply_filters( 'wpb_sanitize_file_name', $sanitized_filename, $filename );
     }
 
+    /**
+     * *.svg & *.svgz support in the WordPress media library.
+     *
+     * @param array $mimes Current allowed MIME types.
+     *
+     * @return array Updated MIME types.
+     */
+    #[Hook( 'upload_mimes' )]
+    public function svg_svgz_support( array $mimes ): array {
+        if ( is_admin() ) {
+            $mimes['svg']  = 'image/svg+xml';
+            $mimes['svgz'] = 'image/svg+xml';
+        }
+
+        return $mimes;
+    }
+
 }
