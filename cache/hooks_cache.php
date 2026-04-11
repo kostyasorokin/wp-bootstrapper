@@ -142,5 +142,12 @@ return array (
       'priority' => 10,
       'args' => 1,
     ),
+    4 => 
+    array (
+      'hook' => 'admin_menu',
+      'method' => 'registerActionSchedulerMenu',
+      'priority' => 9999,
+      'args' => 1,
+    ),
   ),
 );

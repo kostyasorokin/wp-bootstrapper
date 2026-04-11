@@ -67,4 +67,37 @@ class Backend {
         }
     }
 
+    /**
+     * Registers the Action Scheduler menu item under Tools if not already present.
+     * Useful for managing background tasks when WooCommerce or other plugins use AS.
+     *
+     * @link /wp-admin/tools.php?page=action-scheduler
+     */
+    #[Hook( 'admin_menu', priority: 9999 )]
+    public function registerActionSchedulerMenu(): void {
+        global $submenu;
+
+        $already_registered = false;
+
+        // Scan the "Tools" submenu for an existing action-scheduler slug
+        if ( isset( $submenu['tools.php'] ) && is_array( $submenu['tools.php'] ) ) {
+            foreach ( $submenu['tools.php'] as $item ) {
+                if ( isset( $item[2] ) && 'action-scheduler' === $item[2] ) {
+                    $already_registered = true;
+                    break;
+                }
+            }
+        }
+
+        // Register only if missing and user has permissions
+        if ( ! $already_registered && current_user_can( 'manage_options' ) ) {
+            add_management_page(
+                __( 'Action Scheduler', 'wp-bootstrapper' ),
+                __( 'Action Scheduler', 'wp-bootstrapper' ),
+                'manage_options',
+                'action-scheduler'
+            );
+        }
+    }
+
 }
