@@ -70,7 +70,7 @@ return array (
     1 => 
     array (
       'hook' => 'init',
-      'method' => 'disable_oembed_full',
+      'method' => 'oembed_full',
       'priority' => 10,
       'args' => 1,
     ),

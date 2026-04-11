@@ -51,9 +51,9 @@ class JavaScript {
      * to have a single "oEmbed killer" method alongside JS optimizations.
      */
     #[Hook( 'init' )]
-    public function disable_oembed_full(): void {
+    public function oembed_full(): void {
         // If the checkbox is NOT checked, we do nothing and return.
-        if ( ! Options::is( 'disable_oembed_full', false ) ) {
+        if ( ! Options::is( 'oembed_full', true ) ) {
             return;
         }
 

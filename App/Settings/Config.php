@@ -55,11 +55,11 @@ class Config {
                         'description'    => __( 'Enable/Disable the migration layer for jQuery. Warning: This may break very old themes or plugins that rely on deprecated jQuery functions.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
-                    $section->addField( 'disable_oembed_full', FieldType::CHECKBOX, [
+                    $section->addField( 'oembed_full', FieldType::CHECKBOX, [
                         'label'          => 'oEmbed API',
-                        'label_checkbox' => __( 'Completely disable oEmbed features', 'wp-bootstrapper' ),
-                        'description'    => __( 'Removes wp-embed.min.js, discovery links (REST API/XML-RPC), and API routes. This saves one HTTP request and prevents external sites from embedding your content.', 'wp-bootstrapper' ),
-                        'default'        => false,
+                        'label_checkbox' => __( 'oEmbed features', 'wp-bootstrapper' ),
+                        'description'    => __( 'wp-embed.min.js, discovery links (REST API/XML-RPC), and API routes.', 'wp-bootstrapper' ),
+                        'default'        => true,
                     ] );
                     $section->addField( 'heartbeat_api', FieldType::CHECKBOX, [
                         'label'          => 'Heartbeat API',
