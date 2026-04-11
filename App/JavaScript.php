@@ -74,4 +74,17 @@ class JavaScript {
         remove_filter( 'pre_oembed_result', 'wp_filter_pre_oembed_result', 10 );
     }
 
+    /**
+     * The Heartbeat API.
+     * Heartbeat API provides real-time data syncing between the server
+     * and the dashboard (e.g., autosave, post locking).
+     */
+    #[Hook( 'init', priority: 1 )]
+    public function stopHeartbeat(): void {
+        // If the option is disabled in settings, the heartbeat script is deregistered.
+        if ( ! Options::is( 'heartbeat_api', true ) ) {
+            wp_deregister_script( 'heartbeat' );
+        }
+    }
+
 }

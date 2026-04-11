@@ -61,6 +61,12 @@ class Config {
                         'description'    => __( 'Removes wp-embed.min.js, discovery links (REST API/XML-RPC), and API routes. This saves one HTTP request and prevents external sites from embedding your content.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
+                    $section->addField( 'heartbeat_api', FieldType::CHECKBOX, [
+                        'label'          => 'Heartbeat API',
+                        'label_checkbox' => __( 'Heartbeat API', 'wp-bootstrapper' ),
+                        'description'    => __( 'The Heartbeat API script (wp-heartbeat.min.js). This saves server resources but disables features like auto-saving and post-lock notifications.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
                 } );
                 $tab->addSection( 'system_media', __( 'Media', 'wp-bootstrapper' ), '', function ( Section $section ) {
                     $section->addField( 'big_image_size_threshold', FieldType::CHECKBOX, [

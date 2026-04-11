@@ -74,6 +74,13 @@ return array (
       'priority' => 10,
       'args' => 1,
     ),
+    2 => 
+    array (
+      'hook' => 'init',
+      'method' => 'stopHeartbeat',
+      'priority' => 1,
+      'args' => 1,
+    ),
   ),
   'WPB\\Users' => 
   array (
