@@ -81,6 +81,13 @@ return array (
       'priority' => 1,
       'args' => 1,
     ),
+    3 => 
+    array (
+      'hook' => 'script_loader_tag',
+      'method' => 'set_async_defer_attribute',
+      'priority' => 10,
+      'args' => 3,
+    ),
   ),
   'WPB\\Users' => 
   array (

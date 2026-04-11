@@ -87,4 +87,33 @@ class JavaScript {
         }
     }
 
+    /**
+     * Adds async and defer attributes to specific script tags.
+     *
+     * @param string $tag    The original script tag.
+     *
+     * @param string $handle The script's registered handle.
+     * @param string $src    The script's source URL.
+     *
+     * @return string Modified or original script tag.
+     */
+    #[Hook( 'script_loader_tag', priority: 10, accepted_args: 3 )]
+    public function set_async_defer_attribute( string $tag, string $handle, string $src ): string {
+        // Do not work in the admin panel to avoid breaking the editor scripts
+        if ( is_admin() ) {
+            return $tag;
+        }
+        // List of script handles to be loaded asynchronously
+        $async_scripts = [ 'main', 'index', 'wp-embed' ];
+
+        if ( in_array( $handle, $async_scripts, true ) ) {
+            return sprintf(
+                '<script async defer src="%s" id="%s-js"></script>' . "\n",
+                esc_url( $src ),
+                esc_attr( $handle )
+            );
+        }
+
+        return $tag;
+    }
 }
