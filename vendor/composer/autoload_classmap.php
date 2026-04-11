@@ -22,5 +22,6 @@ return array(
     'WPB\\Settings\\Enums\\FieldType' => $baseDir . '/App/Settings/Enums/FieldType.php',
     'WPB\\Settings\\Helpers\\Options' => $baseDir . '/App/Settings/Helpers/Options.php',
     'WPB\\Settings\\Settings' => $baseDir . '/App/Settings/Settings.php',
+    'WPB\\Theme' => $baseDir . '/App/Theme.php',
     'WPB\\Users' => $baseDir . '/App/Users.php',
 );

@@ -37,6 +37,7 @@ class ComposerStaticInit284d67cd56f4336f1da32113768141b9
         'WPB\\Settings\\Enums\\FieldType' => __DIR__ . '/../..' . '/App/Settings/Enums/FieldType.php',
         'WPB\\Settings\\Helpers\\Options' => __DIR__ . '/../..' . '/App/Settings/Helpers/Options.php',
         'WPB\\Settings\\Settings' => __DIR__ . '/../..' . '/App/Settings/Settings.php',
+        'WPB\\Theme' => __DIR__ . '/../..' . '/App/Theme.php',
         'WPB\\Users' => __DIR__ . '/../..' . '/App/Users.php',
     );
 
