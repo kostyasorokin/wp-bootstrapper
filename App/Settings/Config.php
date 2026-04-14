@@ -195,6 +195,16 @@ class Config {
                 //                                ] );
                 //                    } );
             } )
+            ->addTab( 'plugins', __( 'Plugins', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->addSection( 'translatepress', 'TranslatePress', '', function ( Section $section ) {
+                    $section->addField( 'trp_disable_default_css', FieldType::CHECKBOX, [
+                        'label'          => 'trp_disable_default_css',
+                        'label_checkbox' => __( 'Disable Defailt TranslatePress CSS', 'wp-bootstrapper' ),
+                        'description'    => __( 'Removes trp-language-switcher-style. Use this if you want to style the switcher manually in your theme.', 'wp-bootstrapper' ),
+                        'default'        => false,
+                    ] );
+                } );
+            } )
         //                ->addTab( 'telegram', __( 'Telegram Notifications', 'wp-bootstrapper' ), function ( Tab $tab ) {
         //                    $tab->addSection( 'bot_settings', __( 'Bot Settings', 'wp-bootstrapper' ), '', function ( Section $section ) {
         //                        $section->addField( 'TelegramBotToken', FieldType::TEXT, [
