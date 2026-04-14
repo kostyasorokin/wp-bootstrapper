@@ -159,6 +159,16 @@ class Config {
                     ] );
                 } );
             } )
+            ->addTab( 'security', __( 'Security', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->addSection( 'security_main', '', '', function ( Section $section ) {
+                    $section->addField( 'x_frame_options', FieldType::CHECKBOX, [
+                        'label'          => 'Clickjacking Protection',
+                        'label_checkbox' => __( 'Disable Iframe Embedding', 'wp-bootstrapper' ),
+                        'description'    => __( 'Prevents your site from being embedded in iframes on other domains. Tag:', 'wp-bootstrapper' ) . ' &lt;meta http-equiv=&quot;X-Frame-Options&quot; content=&quot;DENY&quot;&gt;',
+                        'default'        => true,
+                    ] );
+                } );
+            } )
             ->addTab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {
                 $tab->addSection( 'cookies_section', '', '', function ( Section $section ) {
                     $section->addField( 'set_referer_cookie_for_new_users', FieldType::CHECKBOX, [

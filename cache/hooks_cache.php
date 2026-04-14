@@ -139,14 +139,21 @@ return array (
     array (
       'hook' => 'wp_head',
       'method' => 'phone_detection',
-      'priority' => 2,
+      'priority' => 5,
       'args' => 1,
     ),
     2 => 
     array (
       'hook' => 'wp_head',
       'method' => 'geo_region',
-      'priority' => 10,
+      'priority' => 5,
+      'args' => 1,
+    ),
+    3 => 
+    array (
+      'hook' => 'wp_head',
+      'method' => 'x_frame_options',
+      'priority' => 5,
       'args' => 1,
     ),
   ),

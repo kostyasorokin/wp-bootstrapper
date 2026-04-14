@@ -57,7 +57,7 @@ class Head {
      * Adds a meta tag to prevent Safari from automatically turning
      * phone-like numbers into clickable links.
      */
-    #[Hook( 'wp_head', priority: 2 )]
+    #[Hook( 'wp_head', priority: 5 )]
     public function phone_detection(): void {
         if ( Options::is( 'phone_detection' ) ) {
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
@@ -69,7 +69,7 @@ class Head {
      * Defines the geographical location of the content.
      * Helpful for local SEO to specify country and region (e.g., UA-KH).
      */
-    #[Hook( 'wp_head' )]
+    #[Hook( 'wp_head', 5 )]
     public function geo_region(): void {
         $region = Options::get( 'geo_region' );
 
@@ -79,6 +79,18 @@ class Head {
                 esc_attr( $region ),
                 PHP_EOL
             );
+        }
+    }
+
+    /**
+     * Prevents embedding the page in an iframe for security.
+     * Protects the site against clickjacking attacks.
+     */
+    #[Hook( 'wp_head', priority: 5 )]
+    public function x_frame_options(): void {
+        if ( Options::is( 'x_frame_options' ) ) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            echo '<meta http-equiv="X-Frame-Options" content="DENY">' . PHP_EOL;
         }
     }
 
