@@ -40,6 +40,16 @@ class Head {
             remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
             remove_action( 'template_redirect', 'wp_shortlink_header', 11 );
         }
+
+        // RSS Feed Links support.
+        // If the option is disabled in settings, we remove theme support for RSS feeds.
+        if ( ! Options::is( 'automatic_feed_links' ) ) {
+            remove_theme_support( 'automatic-feed-links' );
+
+            // Additionally, we remove links to category and comment feeds
+            remove_action( 'wp_head', 'feed_links_extra', 3 );
+            remove_action( 'wp_head', 'feed_links', 2 );
+        }
     }
 
 }

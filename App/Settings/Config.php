@@ -122,23 +122,29 @@ class Config {
                         'label'          => 'wp_generator',
                         'label_checkbox' => __( 'Removes the WordPress version tag', 'wp-bootstrapper' ),
                         'default'        => true,
-                    ] )
-                            ->addField( 'disable_rsd_link', FieldType::CHECKBOX, [
-                                'label'          => 'rsd_link',
-                                'label_checkbox' => __( 'Removes RSD (Really Simple Discovery) link', 'wp-bootstrapper' ),
-                                'default'        => true,
-                            ] )
-                            ->addField( 'disable_wlwmanifest_link', FieldType::CHECKBOX, [
-                                'label'          => 'wlwmanifest_link',
-                                'label_checkbox' => __( 'Removes Windows Live Writer manifest link', 'wp-bootstrapper' ),
-                                'default'        => true,
-                            ] )
-                            ->addField( 'disable_wp_shortlink', FieldType::CHECKBOX, [
-                                'label'          => 'wp_shortlink',
-                                'label_checkbox' => __( 'Removes the short link for the current page', 'wp-bootstrapper' ),
-                                'description'    => __( 'Removes rel="shortlink" from the &lt;head&gt; and the Link header from server responses.', 'wp-bootstrapper' ),
-                                'default'        => true,
-                            ] );
+                    ] );
+                    $section->addField( '', FieldType::CHECKBOX, [
+                        'label'          => 'automatic_feed_links',
+                        'label_checkbox' => __( 'RSS Feed Links', 'wp-bootstrapper' ),
+                        'description'    => __( 'Adds links to RSS feeds directly into the head. Uncheck this if you want to remove RSS discovery links from your site.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'disable_rsd_link', FieldType::CHECKBOX, [
+                        'label'          => 'rsd_link',
+                        'label_checkbox' => __( 'Removes RSD (Really Simple Discovery) link', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'disable_wlwmanifest_link', FieldType::CHECKBOX, [
+                        'label'          => 'wlwmanifest_link',
+                        'label_checkbox' => __( 'Removes Windows Live Writer manifest link', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'disable_wp_shortlink', FieldType::CHECKBOX, [
+                        'label'          => 'wp_shortlink',
+                        'label_checkbox' => __( 'Removes the short link for the current page', 'wp-bootstrapper' ),
+                        'description'    => __( 'Removes rel="shortlink" from the &lt;head&gt; and the Link header from server responses.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
                 } );
             } )
             ->addTab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {
