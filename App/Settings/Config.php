@@ -199,7 +199,7 @@ class Config {
                 $tab->addSection( 'translatepress', 'TranslatePress', '', function ( Section $section ) {
                     $section->addField( 'trp_disable_default_css', FieldType::CHECKBOX, [
                         'label'          => 'trp_disable_default_css',
-                        'label_checkbox' => __( 'Disable Defailt TranslatePress CSS', 'wp-bootstrapper' ),
+                        'label_checkbox' => __( 'Disable Default TranslatePress CSS', 'wp-bootstrapper' ),
                         'description'    => __( 'Removes trp-language-switcher-style. Use this if you want to style the switcher manually in your theme.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
