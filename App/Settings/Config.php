@@ -161,6 +161,12 @@ class Config {
             } )
             ->addTab( 'security', __( 'Security', 'wp-bootstrapper' ), function ( Tab $tab ) {
                 $tab->addSection( 'security_main', '', '', function ( Section $section ) {
+                    $section->addField( 'content_security_policy', FieldType::CHECKBOX, [
+                        'label'          => 'Content Security Policy',
+                        'label_checkbox' => __( 'Strict Content Security Policy (CSP)', 'wp-bootstrapper' ),
+                        'description'    => __( 'Blocks all external resources (fonts, scripts) not hosted on your domain. Tag:', 'wp-bootstrapper' ) . ' &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#39;self&#39;&quot;&gt;',
+                        'default'        => false, // Disabled by default, as this is a "strict" measure
+                    ] );
                     $section->addField( 'x_frame_options', FieldType::CHECKBOX, [
                         'label'          => 'Clickjacking Protection',
                         'label_checkbox' => __( 'Disable Iframe Embedding', 'wp-bootstrapper' ),

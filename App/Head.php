@@ -83,6 +83,18 @@ class Head {
     }
 
     /**
+     * Secures content by preventing resource loading from external sources.
+     * WARNING: 'default-src self' may block external fonts, scripts, or maps.
+     */
+    #[Hook( 'wp_head', priority: 1 )]
+    public function content_security_policy(): void {
+        if ( Options::is( 'content_security_policy' ) ) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            echo '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'">' . PHP_EOL;
+        }
+    }
+
+    /**
      * Prevents embedding the page in an iframe for security.
      * Protects the site against clickjacking attacks.
      */

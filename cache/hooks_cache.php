@@ -152,6 +152,13 @@ return array (
     3 => 
     array (
       'hook' => 'wp_head',
+      'method' => 'content_security_policy',
+      'priority' => 1,
+      'args' => 1,
+    ),
+    4 => 
+    array (
+      'hook' => 'wp_head',
       'method' => 'x_frame_options',
       'priority' => 5,
       'args' => 1,
