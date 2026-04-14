@@ -151,6 +151,12 @@ class Config {
                         'description'    => __( 'Adds a meta tag to prevent iOS Safari from automatically linking phone numbers:', 'wp-bootstrapper' ) . ' &lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;',
                         'default'        => true,
                     ] );
+                    $section->addField( 'geo_region', FieldType::TEXT, [
+                        'label'       => 'geo.region',
+                        'description' => __( 'Specify the geographical region (e.g., UA-KH):', 'wp-bootstrapper' ) . ' &lt;meta name=&quot;geo.region&quot; content=&quot;...&quot;&gt;',
+                        'placeholder' => 'UA-KH',
+                        'default'     => '',
+                    ] );
                 } );
             } )
             ->addTab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {

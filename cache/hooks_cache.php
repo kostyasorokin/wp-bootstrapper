@@ -142,6 +142,13 @@ return array (
       'priority' => 2,
       'args' => 1,
     ),
+    2 => 
+    array (
+      'hook' => 'wp_head',
+      'method' => 'geo_region',
+      'priority' => 10,
+      'args' => 1,
+    ),
   ),
   'WPB\\Backend' => 
   array (

@@ -65,4 +65,21 @@ class Head {
         }
     }
 
+    /**
+     * Defines the geographical location of the content.
+     * Helpful for local SEO to specify country and region (e.g., UA-KH).
+     */
+    #[Hook( 'wp_head' )]
+    public function geo_region(): void {
+        $region = Options::get( 'geo_region' );
+
+        if ( ! empty( $region ) ) {
+            printf(
+                '<meta name="geo.region" content="%s">%s',
+                esc_attr( $region ),
+                PHP_EOL
+            );
+        }
+    }
+
 }
