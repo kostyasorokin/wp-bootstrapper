@@ -34,6 +34,23 @@ return array (
       'args' => 1,
     ),
   ),
+  'WPB\\Plugins\\TranslatePress' => 
+  array (
+    0 => 
+    array (
+      'hook' => 'wp_enqueue_scripts',
+      'method' => 'dequeueStyle',
+      'priority' => 9000,
+      'args' => 1,
+    ),
+    1 => 
+    array (
+      'hook' => 'trp_beautify_language_name',
+      'method' => 'shorten_language_names',
+      'priority' => 10,
+      'args' => 3,
+    ),
+  ),
   'WPB\\Files' => 
   array (
     0 => 
