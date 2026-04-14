@@ -135,6 +135,13 @@ return array (
       'priority' => 10,
       'args' => 1,
     ),
+    1 => 
+    array (
+      'hook' => 'wp_head',
+      'method' => 'phone_detection',
+      'priority' => 2,
+      'args' => 1,
+    ),
   ),
   'WPB\\Backend' => 
   array (

@@ -52,4 +52,17 @@ class Head {
         }
     }
 
+    /**
+     * Disables automatic phone number detection on iOS devices.
+     * Adds a meta tag to prevent Safari from automatically turning
+     * phone-like numbers into clickable links.
+     */
+    #[Hook( 'wp_head', priority: 2 )]
+    public function phone_detection(): void {
+        if ( Options::is( 'phone_detection' ) ) {
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+            echo '<meta name="format-detection" content="telephone=no">' . PHP_EOL;
+        }
+    }
+
 }

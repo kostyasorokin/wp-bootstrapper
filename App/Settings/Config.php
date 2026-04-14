@@ -145,6 +145,12 @@ class Config {
                         'description'    => __( 'Removes rel="shortlink" from the &lt;head&gt; and the Link header from server responses.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
+                    $section->addField( 'phone_detection', FieldType::CHECKBOX, [
+                        'label'          => 'iOS Phone Detection',
+                        'label_checkbox' => __( 'Disable automatic phone detection', 'wp-bootstrapper' ),
+                        'description'    => __( 'Adds a meta tag to prevent iOS Safari from automatically linking phone numbers:', 'wp-bootstrapper' ) . ' &lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;',
+                        'default'        => true,
+                    ] );
                 } );
             } )
             ->addTab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {
