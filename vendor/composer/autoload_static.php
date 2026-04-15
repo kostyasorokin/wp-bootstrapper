@@ -31,6 +31,7 @@ class ComposerStaticInit284d67cd56f4336f1da32113768141b9
         'WPB\\Gutenberg' => __DIR__ . '/../..' . '/App/Gutenberg.php',
         'WPB\\Head' => __DIR__ . '/../..' . '/App/Head.php',
         'WPB\\JavaScript' => __DIR__ . '/../..' . '/App/JavaScript.php',
+        'WPB\\Plugins\\ContactForm7' => __DIR__ . '/../..' . '/App/Plugins/ContactForm7.php',
         'WPB\\Plugins\\TranslatePress' => __DIR__ . '/../..' . '/App/Plugins/TranslatePress.php',
         'WPB\\Security' => __DIR__ . '/../..' . '/App/Security.php',
         'WPB\\Settings\\Config' => __DIR__ . '/../..' . '/App/Settings/Config.php',

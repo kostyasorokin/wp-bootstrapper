@@ -34,6 +34,30 @@ return array (
       'args' => 1,
     ),
   ),
+  'WPB\\Plugins\\ContactForm7' => 
+  array (
+    0 => 
+    array (
+      'hook' => 'wpcf7_load_css',
+      'method' => 'default_css',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    1 => 
+    array (
+      'hook' => 'wpcf7_autop_or_not',
+      'method' => 'autop',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    2 => 
+    array (
+      'hook' => 'wpcf7_form_tag',
+      'method' => 'inject_referer_page',
+      'priority' => 10,
+      'args' => 1,
+    ),
+  ),
   'WPB\\Plugins\\TranslatePress' => 
   array (
     0 => 
