@@ -232,27 +232,39 @@ class Config {
                         'label_checkbox' => __( 'Sets a cookie named "origin" for non-admin visitors if it hasn’t been set yet', 'wp-bootstrapper' ),
                     ] );
                 } );
-
-                //                    $tab->addSection( 'meta_tags', __( 'Meta tags', 'wp-bootstrapper' ), '&lt;meta ... &gt;', function ( Section $section ) {
-                //                        $section->addField( 'metaXFrameOptions', FieldType::CHECKBOX, [
-                //                            'label'          => 'X-Frame-Options DENY',
-                //                            'label_checkbox' => __( 'Prevents embedding the page in an iframe', 'wp-bootstrapper' ),
-                //                            'description'    => '&lt;meta http-equiv="X-Frame-Options" content="DENY"&gt;',
-                //                        ] )
-                //                                ->addField( 'metaGeoRegion', FieldType::TEXT, [
-                //                                    'label'       => 'geo.region',
-                //                                    'description' => __( 'Defines the geographical location...', 'wp-bootstrapper' ),
-                //                                ] );
-                //                    } );
             } )
             ->add_tab( 'plugins', __( 'Plugins', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->add_section( 'translatepress', 'TranslatePress', '', function ( Section $section ) {
-                    $section->add_field( 'trp_disable_default_css', FieldType::CHECKBOX, [
-                        'label'          => 'trp_disable_default_css',
-                        'label_checkbox' => __( 'Disable Default TranslatePress CSS', 'wp-bootstrapper' ),
-                        'description'    => __( 'Removes trp-language-switcher-style. Use this if you want to style the switcher manually in your theme.', 'wp-bootstrapper' ),
-                        'default'        => false,
-                    ] );
+                $tab->when( is_plugin_active( 'contact-form-7/wp-contact-form-7.php' ), function ( Tab $tab ) {
+                    $tab->add_section( 'contact_form_7', 'Contact Form 7', '', function ( Section $section ) {
+                        $section->add_field( 'cf7_default_css', FieldType::CHECKBOX, [
+                            'label'          => 'wpcf7_load_css',
+                            'label_checkbox' => __( 'Contact Form 7 default CSS', 'wp-bootstrapper' ),
+                            'description'    => __( 'Prevents Contact Form 7 from loading its global stylesheet.', 'wp-bootstrapper' ),
+                            'default'        => true,
+                        ] );
+                        $section->add_field( 'cf7_autop', FieldType::CHECKBOX, [
+                            'label'          => 'wpcf7_autop_or_not',
+                            'label_checkbox' => __( 'Automatic paragraph wrapping', 'wp-bootstrapper' ),
+                            'description'    => __( 'Stops Contact Form 7 from wrapping generated markup in automatic paragraphs and line breaks.', 'wp-bootstrapper' ),
+                            'default'        => true,
+                        ] );
+                        $section->add_field( 'cf7_referer_page_tag', FieldType::CHECKBOX, [
+                            'label'          => 'referer-page',
+                            'label_checkbox' => __( 'Fill hidden referer-page form tag', 'wp-bootstrapper' ),
+                            'description'    => __( 'Populates a Contact Form 7 form tag named "referer-page" with the current validated referrer URL.', 'wp-bootstrapper' ),
+                            'default'        => true,
+                        ] );
+                    } );
+                } );
+                $tab->when( is_plugin_active( 'translatepress-multilingual/index.php' ), function ( Tab $tab ) {
+                    $tab->add_section( 'translatepress', 'TranslatePress', '', function ( Section $section ) {
+                        $section->add_field( 'trp_disable_default_css', FieldType::CHECKBOX, [
+                            'label'          => 'trp_disable_default_css',
+                            'label_checkbox' => __( 'Disable Default TranslatePress CSS', 'wp-bootstrapper' ),
+                            'description'    => __( 'Removes trp-language-switcher-style. Use this if you want to style the switcher manually in your theme.', 'wp-bootstrapper' ),
+                            'default'        => false,
+                        ] );
+                    } );
                 } );
             } )
             ->add_tab( 'gutenberg', __( 'Gutenberg', 'wp-bootstrapper' ), function ( Tab $tab ) {
@@ -349,30 +361,6 @@ class Config {
                     ] );
                 } );
             } )
-        //                ->addTab( 'telegram', __( 'Telegram Notifications', 'wp-bootstrapper' ), function ( Tab $tab ) {
-        //                    $tab->addSection( 'bot_settings', __( 'Bot Settings', 'wp-bootstrapper' ), '', function ( Section $section ) {
-        //                        $section->addField( 'TelegramBotToken', FieldType::TEXT, [
-        //                            'label'       => __( 'Bot Token', 'wp-bootstrapper' ),
-        //                            'description' => '<a href="https://core.telegram.org/bots#6-botfather" target="_blank">How get token</a>',
-        //                        ] )
-        //                                ->addField( 'TelegramChatIDs', FieldType::TEXTAREA, [
-        //                                    'label'       => __( 'Chat IDs', 'wp-bootstrapper' ),
-        //                                    'description' => __( 'The separator is a comma without a space...', 'wp-bootstrapper' ),
-        //                                ] );
-        //                    } );
-        //                } )
-        //                ->when( is_plugin_active( 'woocommerce/woocommerce.php' ), function ( Settings $settings ) {
-        //                    $settings->addTab( 'woocommerce', 'WooCommerce', function ( Tab $tab ) {
-        //                        $tab->addSection( 'wc_notif', __( 'Notification: WooCommerce', 'wp-bootstrapper' ), '', function ( Section $section ) {
-        //                            $section->addField( 'TelegramWooCommerceOrderNotification', FieldType::CHECKBOX, [
-        //                                'label' => __( 'Orders', 'wp-bootstrapper' ),
-        //                            ] )
-        //                                    ->addField( 'TelegramWooCommerceLowStockNotification', FieldType::CHECKBOX, [
-        //                                        'label' => __( 'Low Stock', 'wp-bootstrapper' ),
-        //                                    ] );
-        //                        } );
-        //                    } );
-        //                } )
             ->boot(); // Register the hooks in WordPress
     }
 

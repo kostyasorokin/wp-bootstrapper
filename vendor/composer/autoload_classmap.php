@@ -16,6 +16,7 @@ return array(
     'WPB\\Gutenberg' => $baseDir . '/App/Gutenberg.php',
     'WPB\\Head' => $baseDir . '/App/Head.php',
     'WPB\\JavaScript' => $baseDir . '/App/JavaScript.php',
+    'WPB\\Plugins\\ContactForm7' => $baseDir . '/App/Plugins/ContactForm7.php',
     'WPB\\Plugins\\TranslatePress' => $baseDir . '/App/Plugins/TranslatePress.php',
     'WPB\\Security' => $baseDir . '/App/Security.php',
     'WPB\\Settings\\Config' => $baseDir . '/App/Settings/Config.php',

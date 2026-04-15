@@ -58,4 +58,15 @@ class Tab {
         return $this;
     }
 
+    /**
+     * Conditionally executes a callback on the tab.
+     */
+    public function when( bool $condition, callable $callback ): self {
+        if ( $condition ) {
+            $callback( $this );
+        }
+
+        return $this;
+    }
+
 }
