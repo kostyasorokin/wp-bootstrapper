@@ -23,13 +23,13 @@ class Files {
 
     /**
      * Disables the threshold for big image resizing.
-     * When enabled, WordPress will not downscale images larger than 2560px.
+     * When enabled, WordPress will downscale images larger than 2560px.
      *
      * @return bool|int False to disable the threshold.
      */
     #[Hook( 'big_image_size_threshold' )]
-    public function disableBigImageThreshold(): bool|int {
-        return Options::is( 'disable_big_image_threshold' ) ? false : 2560;
+    public function big_image_size_threshold(): bool|int {
+        return ! Options::is( 'big_image_size_threshold' ) ? false : 2560;
     }
 
     /**
@@ -42,7 +42,7 @@ class Files {
      * @return string The sanitized filename.
      */
     #[Hook( 'sanitize_file_name' )]
-    public function clearFileName( string $filename ): string {
+    public function clear_file_name( string $filename ): string {
         $sanitized_filename = remove_accents( $filename ); // Convert to ASCII
 
         // Standard replacements
