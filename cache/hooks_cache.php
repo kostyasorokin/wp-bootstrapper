@@ -380,6 +380,20 @@ return array (
     ),
     1 => 
     array (
+      'hook' => 'template_redirect',
+      'method' => 'block_author_enumeration',
+      'priority' => 0,
+      'args' => 1,
+    ),
+    2 => 
+    array (
+      'hook' => 'redirect_canonical',
+      'method' => 'disable_author_enumeration_canonical',
+      'priority' => 10,
+      'args' => 2,
+    ),
+    3 => 
+    array (
       'hook' => 'wpb_security_daily',
       'method' => 'daily_maintenance',
       'priority' => 10,

@@ -217,6 +217,12 @@ class Config {
                         'description'    => __( 'Protects your site by sending an HTTP header and a meta tag.', 'wp-bootstrapper' ) . ' http header: X-Frame-Options: DENY +  &lt;meta http-equiv=&quot;X-Frame-Options&quot; content=&quot;DENY&quot;&gt;',
                         'default'        => true,
                     ] );
+                    $section->add_field( 'block_author_enumeration', FieldType::CHECKBOX, [
+                        'label'          => 'Author Enumeration',
+                        'label_checkbox' => __( 'Block author enumeration', 'wp-bootstrapper' ),
+                        'description'    => __( 'Returns a 404 response for guest requests that try to resolve author archives via query vars or canonical redirects.', 'wp-bootstrapper' ),
+                        'default'        => false,
+                    ] );
                 } );
             } )
             ->add_tab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {

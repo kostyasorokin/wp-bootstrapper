@@ -16,6 +16,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
 use WPB\Attributes\Hook;
+use WPB\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -77,6 +78,46 @@ class Security {
     }
 
     /**
+     * Blocks guest author enumeration requests by forcing a 404.
+     */
+    #[Hook( 'template_redirect', priority: 0 )]
+    public function block_author_enumeration(): void {
+        if ( ! $this->should_block_author_enumeration() ) {
+            return;
+        }
+
+        global $wp_query;
+
+        if ( isset( $wp_query ) ) {
+            $wp_query->set_404();
+        }
+
+        status_header( 404 );
+        nocache_headers();
+
+        if ( function_exists( 'redirect_guess_404_permalink' ) ) {
+            remove_filter( 'template_redirect', 'redirect_guess_404_permalink' );
+        }
+    }
+
+    /**
+     * Prevents canonical redirects from resolving author enumeration attempts.
+     *
+     * @param string|false $redirect Redirect URL.
+     * @param string       $request  Requested URL.
+     *
+     * @return string|false
+     */
+    #[Hook( 'redirect_canonical', accepted_args: 2 )]
+    public function disable_author_enumeration_canonical( string|false $redirect, string $request ): string|false {
+        if ( ! $this->should_block_author_enumeration() ) {
+            return $redirect;
+        }
+
+        return false;
+    }
+
+    /**
      * Daily hardening pass for uploads.
      */
     #[Hook( self::CRON_HOOK )]
@@ -108,6 +149,28 @@ class Security {
         if ( ! wp_next_scheduled( self::CRON_HOOK ) ) {
             wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', self::CRON_HOOK );
         }
+    }
+
+    /**
+     * Determines whether the current request is an author enumeration attempt.
+     */
+    private function should_block_author_enumeration(): bool {
+        if ( is_admin() || is_user_logged_in() || ! Options::is( 'block_author_enumeration', false ) ) {
+            return false;
+        }
+
+        if ( is_author() ) {
+            return true;
+        }
+
+        $author_id = get_query_var( 'author' );
+        if ( '' !== (string) $author_id ) {
+            return true;
+        }
+
+        $author_name = get_query_var( 'author_name' );
+
+        return is_string( $author_name ) && '' !== $author_name;
     }
 
     /**
