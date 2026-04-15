@@ -32,6 +32,7 @@ class ComposerStaticInit284d67cd56f4336f1da32113768141b9
         'WPB\\Head' => __DIR__ . '/../..' . '/App/Head.php',
         'WPB\\JavaScript' => __DIR__ . '/../..' . '/App/JavaScript.php',
         'WPB\\Plugins\\TranslatePress' => __DIR__ . '/../..' . '/App/Plugins/TranslatePress.php',
+        'WPB\\Security' => __DIR__ . '/../..' . '/App/Security.php',
         'WPB\\Settings\\Config' => __DIR__ . '/../..' . '/App/Settings/Config.php',
         'WPB\\Settings\\Definitions\\Field' => __DIR__ . '/../..' . '/App/Settings/Definitions/Field.php',
         'WPB\\Settings\\Definitions\\Section' => __DIR__ . '/../..' . '/App/Settings/Definitions/Section.php',

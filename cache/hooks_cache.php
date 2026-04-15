@@ -369,4 +369,21 @@ return array (
       'args' => 1,
     ),
   ),
+  'WPB\\Security' => 
+  array (
+    0 => 
+    array (
+      'hook' => 'init',
+      'method' => 'bootstrap',
+      'priority' => 1,
+      'args' => 1,
+    ),
+    1 => 
+    array (
+      'hook' => 'wpb_security_daily',
+      'method' => 'daily_maintenance',
+      'priority' => 10,
+      'args' => 1,
+    ),
+  ),
 );

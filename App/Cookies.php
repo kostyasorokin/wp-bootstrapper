@@ -38,15 +38,13 @@ class Cookies {
 
         // Check if headers have already been sent
         if ( headers_sent() ) {
-            if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( 'WP Bootstrapper: Headers already sent, "origin" cookie skipped.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log.error_log_found
-            }
-
             return;
         }
 
         // Keep the full referrer URL (including query params) if it's valid.
-        $rawReferer = isset( $_SERVER['HTTP_REFERER'] ) ? wp_unslash( (string) $_SERVER['HTTP_REFERER'] ) : '';
+        $rawReferer = isset( $_SERVER['HTTP_REFERER'] )
+            ? esc_url_raw( wp_unslash( (string) $_SERVER['HTTP_REFERER'] ) )
+            : '';
         $referer    = '' !== $rawReferer && wp_http_validate_url( $rawReferer ) ? $rawReferer : 'n/a';
 
         // Set the 'origin' cookie for 1 day with secure defaults.

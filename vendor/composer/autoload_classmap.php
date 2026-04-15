@@ -17,6 +17,7 @@ return array(
     'WPB\\Head' => $baseDir . '/App/Head.php',
     'WPB\\JavaScript' => $baseDir . '/App/JavaScript.php',
     'WPB\\Plugins\\TranslatePress' => $baseDir . '/App/Plugins/TranslatePress.php',
+    'WPB\\Security' => $baseDir . '/App/Security.php',
     'WPB\\Settings\\Config' => $baseDir . '/App/Settings/Config.php',
     'WPB\\Settings\\Definitions\\Field' => $baseDir . '/App/Settings/Definitions/Field.php',
     'WPB\\Settings\\Definitions\\Section' => $baseDir . '/App/Settings/Definitions/Section.php',
