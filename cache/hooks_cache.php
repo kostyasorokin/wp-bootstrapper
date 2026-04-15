@@ -39,7 +39,7 @@ return array (
     0 => 
     array (
       'hook' => 'wp_enqueue_scripts',
-      'method' => 'dequeueStyle',
+      'method' => 'dequeue_style',
       'priority' => 9000,
       'args' => 1,
     ),
@@ -225,7 +225,7 @@ return array (
     0 => 
     array (
       'hook' => 'cron_schedules',
-      'method' => 'addIntervals',
+      'method' => 'add_intervals',
       'priority' => 10,
       'args' => 1,
     ),
@@ -287,7 +287,7 @@ return array (
     0 => 
     array (
       'hook' => 'admin_bar_menu',
-      'method' => 'removeWpLogo',
+      'method' => 'remove_wp_logo',
       'priority' => 999,
       'args' => 1,
     ),
@@ -315,7 +315,7 @@ return array (
     4 => 
     array (
       'hook' => 'admin_menu',
-      'method' => 'registerActionSchedulerMenu',
+      'method' => 'register_action_scheduler_menu',
       'priority' => 9999,
       'args' => 1,
     ),
