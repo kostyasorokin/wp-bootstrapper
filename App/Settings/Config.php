@@ -61,6 +61,12 @@ class Config {
                         'placeholder' => '99999',
                         'default'     => 99999,
                     ] );
+                    $section->add_field( 'disable_wptexturize', FieldType::CHECKBOX, [
+                        'label'          => 'run_wptexturize',
+                        'label_checkbox' => __( 'Disable wptexturize', 'wp-bootstrapper' ),
+                        'description'    => __( 'Stops WordPress from converting plain quotes, dashes, and similar characters into typographic variants.', 'wp-bootstrapper' ),
+                        'default'        => false,
+                    ] );
                 } );
                 $tab->add_section( 'system_javascript', __( 'JavaScript', 'wp-bootstrapper' ), '', function ( Section $section ) {
                     $section->add_field( 'jquery', FieldType::CHECKBOX, [
@@ -79,6 +85,12 @@ class Config {
                         'label'          => 'oEmbed API',
                         'label_checkbox' => __( 'oEmbed features', 'wp-bootstrapper' ),
                         'description'    => __( 'wp-embed.min.js, discovery links (REST API/XML-RPC), and API routes.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->add_field( 'autosave_script', FieldType::CHECKBOX, [
+                        'label'          => 'autosave',
+                        'label_checkbox' => __( 'Autosave script', 'wp-bootstrapper' ),
+                        'description'    => __( 'The WordPress autosave script on both frontend and admin print-script hooks.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
                     $section->add_field( 'heartbeat_api', FieldType::CHECKBOX, [

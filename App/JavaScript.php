@@ -105,6 +105,15 @@ class JavaScript {
     }
 
     /**
+     * The WordPress autosave script.
+     */
+    #[Hook( 'wp_print_scripts' )]
+    #[Hook( 'admin_print_scripts' )]
+    public function autosave_script(): void {
+        ! Options::is( 'autosave_script' ) && wp_deregister_script( 'autosave' );
+    }
+
+    /**
      * Adds async and defer attributes to specific script tags.
      *
      * @param string $tag    The original script tag.

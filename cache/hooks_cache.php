@@ -204,6 +204,20 @@ return array (
     ),
     4 => 
     array (
+      'hook' => 'wp_print_scripts',
+      'method' => 'autosave_script',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    5 => 
+    array (
+      'hook' => 'admin_print_scripts',
+      'method' => 'autosave_script',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    6 => 
+    array (
       'hook' => 'script_loader_tag',
       'method' => 'set_async_defer_attribute',
       'priority' => 10,
@@ -275,6 +289,13 @@ return array (
       'args' => 1,
     ),
     6 => 
+    array (
+      'hook' => 'run_wptexturize',
+      'method' => 'run_wptexturize',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    7 => 
     array (
       'hook' => 'wp_head',
       'method' => 'x_frame_options',

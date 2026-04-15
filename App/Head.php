@@ -112,6 +112,18 @@ class Head {
     }
 
     /**
+     * Disables wptexturize conversions when requested in settings.
+     *
+     * @param bool $run Whether wptexturize should run.
+     *
+     * @return bool
+     */
+    #[Hook( 'run_wptexturize' )]
+    public function run_wptexturize( bool $run ): bool {
+        return Options::is( 'disable_wptexturize' ) ? false : $run;
+    }
+
+    /**
      * Add X-Frame-Options meta tag as a fallback.
      *
      * Prevents embedding the page in an iframe for security.
