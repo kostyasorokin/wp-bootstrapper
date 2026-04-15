@@ -168,19 +168,26 @@ return array (
     ),
     3 => 
     array (
+      'hook' => 'send_headers',
+      'method' => 'content_security_policy_header',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    4 => 
+    array (
       'hook' => 'wp_head',
       'method' => 'content_security_policy',
       'priority' => 1,
       'args' => 1,
     ),
-    4 => 
+    5 => 
     array (
       'hook' => 'send_headers',
       'method' => 'x_frame_header',
       'priority' => 10,
       'args' => 1,
     ),
-    5 => 
+    6 => 
     array (
       'hook' => 'wp_head',
       'method' => 'x_frame_options',

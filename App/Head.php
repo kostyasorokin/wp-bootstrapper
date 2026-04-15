@@ -83,6 +83,15 @@ class Head {
     }
 
     /**
+     * Sends Content-Security-Policy (CSP) HTTP header.
+     * Restricts resource loading to the site's own origin only.
+     */
+    #[Hook( 'send_headers' )]
+    public function content_security_policy_header(): void {
+        Options::is( 'content_security_policy' ) && header( "Content-Security-Policy: default-src 'self'" );
+    }
+
+    /**
      * Secures content by preventing resource loading from external sources.
      * WARNING: 'default-src self' may block external fonts, scripts, or maps.
      */
