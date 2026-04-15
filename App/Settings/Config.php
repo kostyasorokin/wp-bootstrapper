@@ -89,6 +89,12 @@ class Config {
                         'description'    => __( 'Completely disables the built-in WordPress theme and plugin editor, as well as the ability to update or install new plugins and themes from the admin dashboard. Highly recommended for production sites.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
+                    $section->addField( 'allow_svg_uploads', FieldType::CHECKBOX, [
+                        'label'          => '*.svg; *.svgz',
+                        'label_checkbox' => __( 'Uploads for privileged users', 'wp-bootstrapper' ),
+                        'description'    => __( 'When enabled, only users with the required capability can upload *.svg; *.svgz files, and uploaded files are server-side validated.', 'wp-bootstrapper' ),
+                        'default'        => false,
+                    ] );
                 } );
             } )
             ->addTab( 'admin', __( 'Admin', 'wp-bootstrapper' ), function ( Tab $tab ) {

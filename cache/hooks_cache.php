@@ -74,6 +74,13 @@ return array (
       'priority' => 10,
       'args' => 1,
     ),
+    3 => 
+    array (
+      'hook' => 'wp_handle_upload_prefilter',
+      'method' => 'validate_svg_upload',
+      'priority' => 10,
+      'args' => 1,
+    ),
   ),
   'WPB\\Theme' => 
   array (
