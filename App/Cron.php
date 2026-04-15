@@ -26,7 +26,7 @@ class Cron {
      * @return array Modified array containing the new cron schedules.
      */
     #[Hook( 'cron_schedules' )]
-    public function addIntervals( array $schedules ): array {
+    public function add_intervals( array $schedules ): array {
         $new_schedules = [
             'month'        => [
                 'interval' => MONTH_IN_SECONDS,

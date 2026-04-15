@@ -39,57 +39,57 @@ class Config {
             pageId: 'bootstrapper',
             title: __( 'Bootstrapper', 'wp-bootstrapper' )
         )
-            ->addTab( 'system', __( 'System', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'system_cron', __( 'Cron', 'wp-bootstrapper' ), '', function ( Section $section ) {
-                    $section->addField( 'disable_wp_cron', FieldType::CHECKBOX, [
+            ->add_tab( 'system', __( 'System', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'system_cron', __( 'Cron', 'wp-bootstrapper' ), '', function ( Section $section ) {
+                    $section->add_field( 'disable_wp_cron', FieldType::CHECKBOX, [
                         'label'          => 'DISABLE_WP_CRON',
                         'label_checkbox' => __( 'Disable WordPress Virtual Cron', 'wp-bootstrapper' ),
                         'description'    => __( 'Disables wp-cron.php execution on every page load. Recommended if you have a real system cron job configured.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
                 } );
-                $tab->addSection( 'system_javascript', __( 'JavaScript', 'wp-bootstrapper' ), '', function ( Section $section ) {
-                    $section->addField( 'jquery', FieldType::CHECKBOX, [
+                $tab->add_section( 'system_javascript', __( 'JavaScript', 'wp-bootstrapper' ), '', function ( Section $section ) {
+                    $section->add_field( 'jquery', FieldType::CHECKBOX, [
                         'label'          => 'jquery.min.js',
                         'label_checkbox' => 'jQuery',
                         'description'    => __( 'Warning: Removes jQuery from the frontend. Only use this if your theme and plugins do not rely on jQuery. This will significantly improve PageSpeed, but might break things.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'jquery_migrate', FieldType::CHECKBOX, [
+                    $section->add_field( 'jquery_migrate', FieldType::CHECKBOX, [
                         'label'          => 'jquery-migrate.js',
                         'label_checkbox' => 'jQuery Migrate',
                         'description'    => __( 'The migration layer for jQuery. Warning: This may break very old themes or plugins that rely on deprecated jQuery functions.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'oembed_full', FieldType::CHECKBOX, [
+                    $section->add_field( 'oembed_full', FieldType::CHECKBOX, [
                         'label'          => 'oEmbed API',
                         'label_checkbox' => __( 'oEmbed features', 'wp-bootstrapper' ),
                         'description'    => __( 'wp-embed.min.js, discovery links (REST API/XML-RPC), and API routes.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'heartbeat_api', FieldType::CHECKBOX, [
+                    $section->add_field( 'heartbeat_api', FieldType::CHECKBOX, [
                         'label'          => 'Heartbeat API',
                         'label_checkbox' => 'Heartbeat API',
                         'description'    => __( 'The Heartbeat API script (wp-heartbeat.min.js). This saves server resources but disables features like auto-saving and post-lock notifications.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
                 } );
-                $tab->addSection( 'system_media', __( 'Media', 'wp-bootstrapper' ), '', function ( Section $section ) {
-                    $section->addField( 'big_image_size_threshold', FieldType::CHECKBOX, [
+                $tab->add_section( 'system_media', __( 'Media', 'wp-bootstrapper' ), '', function ( Section $section ) {
+                    $section->add_field( 'big_image_size_threshold', FieldType::CHECKBOX, [
                         'label'          => 'big_image_size_threshold',
                         'label_checkbox' => __( 'Automatic scaling of large images', 'wp-bootstrapper' ),
                         'description'    => __( 'When enabled, WordPress will downscale images larger than 2560px.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
                 } );
-                $tab->addSection( 'system_files', __( 'Files', 'wp-bootstrapper' ), '', function ( Section $section ) {
-                    $section->addField( 'disallow_file_mods', FieldType::CHECKBOX, [
+                $tab->add_section( 'system_files', __( 'Files', 'wp-bootstrapper' ), '', function ( Section $section ) {
+                    $section->add_field( 'disallow_file_mods', FieldType::CHECKBOX, [
                         'label'          => 'DISALLOW_FILE_MODS',
                         'label_checkbox' => __( 'Disable File Modifications', 'wp-bootstrapper' ),
                         'description'    => __( 'Completely disables the built-in WordPress theme and plugin editor, as well as the ability to update or install new plugins and themes from the admin dashboard. Highly recommended for production sites.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'allow_svg_uploads', FieldType::CHECKBOX, [
+                    $section->add_field( 'allow_svg_uploads', FieldType::CHECKBOX, [
                         'label'          => '*.svg; *.svgz',
                         'label_checkbox' => __( 'Uploads for privileged users', 'wp-bootstrapper' ),
                         'description'    => __( 'When enabled, only users with the required capability can upload *.svg; *.svgz files, and uploaded files are server-side validated.', 'wp-bootstrapper' ),
@@ -97,67 +97,67 @@ class Config {
                     ] );
                 } );
             } )
-            ->addTab( 'admin', __( 'Admin', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'admin_cleanup', '', '', function ( Section $section ) {
-                    $section->addField( 'disable_admin_bar_menu_logo', FieldType::CHECKBOX, [
+            ->add_tab( 'admin', __( 'Admin', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'admin_cleanup', '', '', function ( Section $section ) {
+                    $section->add_field( 'disable_admin_bar_menu_logo', FieldType::CHECKBOX, [
                         'label'          => 'admin_bar_menu',
                         'label_checkbox' => __( 'Removes the WordPress logo from the admin bar', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] )
-                            ->addField( 'disable_welcome_panel', FieldType::CHECKBOX, [
+                            ->add_field( 'disable_welcome_panel', FieldType::CHECKBOX, [
                                 'label'          => 'welcome_panel',
                                 'label_checkbox' => __( 'Remove the Welcome Panel', 'wp-bootstrapper' ),
                                 'description'    => __( 'Hides the "Welcome to WordPress" box from the dashboard.', 'wp-bootstrapper' ),
                                 'default'        => true,
                             ] )
-                            ->addField( 'disable_admin_footer_text', FieldType::CHECKBOX, [
+                            ->add_field( 'disable_admin_footer_text', FieldType::CHECKBOX, [
                                 'label'          => 'admin_footer_text',
                                 'label_checkbox' => __( 'Remove "Thank you for creating with WordPress" text', 'wp-bootstrapper' ),
                                 'default'        => true,
                             ] )
-                            ->addField( 'disable_admin_footer_version', FieldType::CHECKBOX, [
+                            ->add_field( 'disable_admin_footer_version', FieldType::CHECKBOX, [
                                 'label'          => 'update_footer',
                                 'label_checkbox' => __( 'Remove WordPress version from the footer', 'wp-bootstrapper' ),
                                 'default'        => true,
                             ] );
                 } );
             } )
-            ->addTab( 'head', __( 'Head', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'head_cleanup', '', '', function ( Section $section ) {
-                    $section->addField( 'disable_wp_generator', FieldType::CHECKBOX, [
+            ->add_tab( 'head', __( 'Head', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'head_cleanup', '', '', function ( Section $section ) {
+                    $section->add_field( 'disable_wp_generator', FieldType::CHECKBOX, [
                         'label'          => 'wp_generator',
                         'label_checkbox' => __( 'Removes the WordPress version tag', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'automatic_feed_links', FieldType::CHECKBOX, [
+                    $section->add_field( 'automatic_feed_links', FieldType::CHECKBOX, [
                         'label'          => 'automatic_feed_links',
                         'label_checkbox' => __( 'RSS Feed Links', 'wp-bootstrapper' ),
                         'description'    => __( 'Adds links to RSS feeds directly into the head. Uncheck this if you want to remove RSS discovery links from your site.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'disable_rsd_link', FieldType::CHECKBOX, [
+                    $section->add_field( 'disable_rsd_link', FieldType::CHECKBOX, [
                         'label'          => 'rsd_link',
                         'label_checkbox' => __( 'Removes RSD (Really Simple Discovery) link', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'disable_wlwmanifest_link', FieldType::CHECKBOX, [
+                    $section->add_field( 'disable_wlwmanifest_link', FieldType::CHECKBOX, [
                         'label'          => 'wlwmanifest_link',
                         'label_checkbox' => __( 'Removes Windows Live Writer manifest link', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'disable_wp_shortlink', FieldType::CHECKBOX, [
+                    $section->add_field( 'disable_wp_shortlink', FieldType::CHECKBOX, [
                         'label'          => 'wp_shortlink',
                         'label_checkbox' => __( 'Removes the short link for the current page', 'wp-bootstrapper' ),
                         'description'    => __( 'Removes rel="shortlink" from the &lt;head&gt; and the Link header from server responses.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'phone_detection', FieldType::CHECKBOX, [
+                    $section->add_field( 'phone_detection', FieldType::CHECKBOX, [
                         'label'          => 'iOS Phone Detection',
                         'label_checkbox' => __( 'Disable automatic phone detection', 'wp-bootstrapper' ),
                         'description'    => __( 'Adds a meta tag to prevent iOS Safari from automatically linking phone numbers:', 'wp-bootstrapper' ) . ' &lt;meta name=&quot;format-detection&quot; content=&quot;telephone=no&quot;&gt;',
                         'default'        => true,
                     ] );
-                    $section->addField( 'geo_region', FieldType::TEXT, [
+                    $section->add_field( 'geo_region', FieldType::TEXT, [
                         'label'       => 'geo.region',
                         'description' => __( 'Specify the geographical region (e.g., UA-KH):', 'wp-bootstrapper' ) . ' &lt;meta name=&quot;geo.region&quot; content=&quot;...&quot;&gt;',
                         'placeholder' => 'UA-KH',
@@ -165,15 +165,15 @@ class Config {
                     ] );
                 } );
             } )
-            ->addTab( 'security', __( 'Security', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'security_main', '', '', function ( Section $section ) {
-                    $section->addField( 'content_security_policy', FieldType::CHECKBOX, [
+            ->add_tab( 'security', __( 'Security', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'security_main', '', '', function ( Section $section ) {
+                    $section->add_field( 'content_security_policy', FieldType::CHECKBOX, [
                         'label'          => 'Content Security Policy',
                         'label_checkbox' => __( 'Strict Content Security Policy (CSP)', 'wp-bootstrapper' ),
                         'description'    => __( 'Protects your site by allowing resources only from your own domain. Sends an HTTP header and a meta tag:', 'wp-bootstrapper' ) . ' &lt;meta http-equiv=&quot;Content-Security-Policy&quot; content=&quot;default-src &#39;self&#39;&quot;&gt;',
                         'default'        => false, // Disabled by default, as this is a "strict" measure
                     ] );
-                    $section->addField( 'x_frame_options', FieldType::CHECKBOX, [
+                    $section->add_field( 'x_frame_options', FieldType::CHECKBOX, [
                         'label'          => 'Clickjacking Protection',
                         'label_checkbox' => __( 'Disable Iframe Embedding', 'wp-bootstrapper' ),
                         'description'    => __( 'Protects your site by sending an HTTP header and a meta tag.', 'wp-bootstrapper' ) . ' http header: X-Frame-Options: DENY +  &lt;meta http-equiv=&quot;X-Frame-Options&quot; content=&quot;DENY&quot;&gt;',
@@ -181,9 +181,9 @@ class Config {
                     ] );
                 } );
             } )
-            ->addTab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'cookies_section', '', '', function ( Section $section ) {
-                    $section->addField( 'set_referer_cookie_for_new_users', FieldType::CHECKBOX, [
+            ->add_tab( 'cookies', __( 'Cookies', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'cookies_section', '', '', function ( Section $section ) {
+                    $section->add_field( 'set_referer_cookie_for_new_users', FieldType::CHECKBOX, [
                         'label'          => 'cookie "origin"',
                         'label_checkbox' => __( 'Sets a cookie named "origin" for non-admin visitors if it hasn’t been set yet', 'wp-bootstrapper' ),
                     ] );
@@ -201,9 +201,9 @@ class Config {
                 //                                ] );
                 //                    } );
             } )
-            ->addTab( 'plugins', __( 'Plugins', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'translatepress', 'TranslatePress', '', function ( Section $section ) {
-                    $section->addField( 'trp_disable_default_css', FieldType::CHECKBOX, [
+            ->add_tab( 'plugins', __( 'Plugins', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'translatepress', 'TranslatePress', '', function ( Section $section ) {
+                    $section->add_field( 'trp_disable_default_css', FieldType::CHECKBOX, [
                         'label'          => 'trp_disable_default_css',
                         'label_checkbox' => __( 'Disable Default TranslatePress CSS', 'wp-bootstrapper' ),
                         'description'    => __( 'Removes trp-language-switcher-style. Use this if you want to style the switcher manually in your theme.', 'wp-bootstrapper' ),
@@ -211,93 +211,93 @@ class Config {
                     ] );
                 } );
             } )
-            ->addTab( 'gutenberg', __( 'Gutenberg', 'wp-bootstrapper' ), function ( Tab $tab ) {
-                $tab->addSection( 'gutenberg_main', '', '', function ( Section $section ) {
-                    $section->addField( 'gutenberg_remove_svg_filters', FieldType::CHECKBOX, [
+            ->add_tab( 'gutenberg', __( 'Gutenberg', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->add_section( 'gutenberg_main', '', '', function ( Section $section ) {
+                    $section->add_field( 'gutenberg_svg_filters', FieldType::CHECKBOX, [
                         'label'          => 'wp_global_styles_render_svg_filters',
                         'label_checkbox' => __( 'Duotone SVG filters from wp_body_open', 'wp-bootstrapper' ),
                         'description'    => __( 'Renders SVG filters used for duotone effects immediately after the body tag.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_admin_svg_filters', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_admin_svg_filters', FieldType::CHECKBOX, [
                         'label'          => 'wp_global_styles_render_svg_filters',
                         'label_checkbox' => __( 'Duotone SVG filters from in_admin_header', 'wp-bootstrapper' ),
                         'description'    => __( 'Renders SVG filters in the WordPress admin bar / header area.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_global_styles_css', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_global_styles_css', FieldType::CHECKBOX, [
                         'label'          => 'wp_enqueue_global_styles',
                         'label_checkbox' => __( 'Global Styles Enqueue', 'wp-bootstrapper' ),
                         'description'    => __( 'Loads the main Global Styles (theme.json) CSS on the frontend.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_duotone_support', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_duotone_support', FieldType::CHECKBOX, [
                         'label'          => 'wp_render_duotone_support',
                         'label_checkbox' => __( 'Duotone filter Rendering', 'wp-bootstrapper' ),
                         'description'    => __( 'Support for rendering duotone filters for blocks.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_group_inner_container', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_group_inner_container', FieldType::CHECKBOX, [
                         'label'          => 'wp_restore_group_inner_container',
                         'label_checkbox' => __( 'Group Inner Container', 'wp-bootstrapper' ),
                         'description'    => __( 'Restores the legacy .wp-block-group__inner-container wrapper for Group blocks.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_layout_support', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_layout_support', FieldType::CHECKBOX, [
                         'label'          => 'wp_render_layout_support_flag',
                         'label_checkbox' => __( 'Layout Support Flag', 'wp-bootstrapper' ),
                         'description'    => __( 'Adds layout-specific CSS classes and inline styles to blocks.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_disable_separate_assets', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_separate_core_block_assets', FieldType::CHECKBOX, [
                         'label'          => 'should_load_separate_core_block_assets',
                         'label_checkbox' => __( 'Separate core block assets loading', 'wp-bootstrapper' ),
                         'description'    => __( 'Loads only the CSS for the blocks present on the page instead of one giant file.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_dequeue_library', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_wp_block_library', FieldType::CHECKBOX, [
                         'label'          => 'wp-block-library',
                         'label_checkbox' => __( 'Block Library CSS', 'wp-bootstrapper' ),
                         'description'    => __( 'The core CSS for all standard WordPress blocks.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_dequeue_library_theme', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_wp_block_library_theme', FieldType::CHECKBOX, [
                         'label'          => 'wp-block-library-theme',
                         'label_checkbox' => __( 'Block Library Theme', 'wp-bootstrapper' ),
                         'description'    => __( 'Visual styles for core blocks that make them look like the default theme.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_dequeue_global_styles', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_global_styles', FieldType::CHECKBOX, [
                         'label'          => 'global-styles',
                         'label_checkbox' => __( 'Global Styles CSS', 'wp-bootstrapper' ),
                         'description'    => __( 'CSS generated from theme.json settings.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_dequeue_classic_theme', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_classic_theme_styles', FieldType::CHECKBOX, [
                         'label'          => 'classic-theme-styles',
                         'label_checkbox' => __( 'Classic Theme Styles', 'wp-bootstrapper' ),
                         'description'    => __( 'Legacy styles for block elements in classic (non-block) themes.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_footer_global_styles', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_wp_global_styles', FieldType::CHECKBOX, [
                         'label'          => 'wp_add_global_styles',
                         'label_checkbox' => __( 'Footer Global Styles', 'wp-bootstrapper' ),
                         'description'    => __( 'Inline global styles normally added to the footer.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_remove_footer_svg_filters', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_wp_global_styles_render_svg_filters', FieldType::CHECKBOX, [
                         'label'          => 'wp_add_global_styles_render_svg_filters',
                         'label_checkbox' => __( 'Footer SVG Filters', 'wp-bootstrapper' ),
                         'description'    => __( 'Renders remaining SVG filters in the site footer.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_omit_duotone_inline', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_omit_duotone_inline', FieldType::CHECKBOX, [
                         'label'          => 'wp_omit_duotone_inline_styles',
                         'label_checkbox' => __( 'Omit Inline Duotone', 'wp-bootstrapper' ),
                         'description'    => __( 'By default, WP prevents some duotone styles from being inline. Keep enabled for default behavior.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( 'gutenberg_disable_patterns', FieldType::CHECKBOX, [
+                    $section->add_field( 'gutenberg_core_block_patterns', FieldType::CHECKBOX, [
                         'label'          => 'core-block-patterns',
                         'label_checkbox' => __( 'Block Patterns', 'wp-bootstrapper' ),
                         'description'    => __( 'The core block pattern library provided by WordPress.', 'wp-bootstrapper' ),

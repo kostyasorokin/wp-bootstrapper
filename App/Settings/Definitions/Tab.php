@@ -45,7 +45,7 @@ class Tab {
      *                                   to fluently add fields to it.
      *                                   * @return self Returns the Tab instance for method chaining.
      */
-    public function addSection( string $id, string $title, string $description = '', ?callable $buildFields = null ): self {
+    public function add_section( string $id, string $title, string $description = '', ?callable $buildFields = null ): self {
         $section = new Section( $id, $title, $description );
 
         // Execute the closure to populate the section with fields if provided

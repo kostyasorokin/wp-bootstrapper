@@ -56,7 +56,7 @@ class Section {
      *                                  }
      * @return self Returns the Section instance for method chaining.
      */
-    public function addField( string $id, FieldType $type = FieldType::TEXT, array $args = [] ): self {
+    public function add_field( string $id, FieldType $type = FieldType::TEXT, array $args = [] ): self {
         $this->fields[] = new Field(
             id: $id,
             type: $type,

@@ -54,7 +54,7 @@ class Settings {
     /**
      * Registers a new tab within the settings page.
      */
-    public function addTab( string $id, string $name, callable $buildSections ): self {
+    public function add_tab( string $id, string $name, callable $buildSections ): self {
         $tab = new Tab( $id, $name );
         $buildSections( $tab );
         $this->tabs[] = $tab;
@@ -77,29 +77,29 @@ class Settings {
      * Hooks the settings builder into the WordPress lifecycle.
      */
     public function boot(): void {
-        add_action( 'admin_menu', [ $this, 'addMenuPage' ] );
-        add_action( 'admin_init', [ $this, 'registerSettings' ] );
+        add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
+        add_action( 'admin_init', [ $this, 'register_settings' ] );
     }
 
     /**
      * Callback for the 'admin_menu' hook.
      */
-    public function addMenuPage(): void {
+    public function add_menu_page(): void {
         add_submenu_page(
             $this->parentSlug,
             esc_html( $this->title ),
             esc_html( $this->menuName ),
             'manage_options',
             $this->pageId,
-            [ $this, 'renderPage' ]
+            [ $this, 'render_page' ]
         );
     }
 
     /**
      * Callback for the 'admin_init' hook.
      */
-    public function registerSettings(): void {
-        register_setting( $this->pageId, $this->optionName, [ $this, 'sanitizeSettings' ] );
+    public function register_settings(): void {
+        register_setting( $this->pageId, $this->optionName, [ $this, 'sanitize_settings' ] );
 
         foreach ( $this->tabs as $tabIndex => $tab ) {
             $pageParam = $this->pageId . '_tab_' . $tabIndex;
@@ -122,7 +122,7 @@ class Settings {
                     add_settings_field(
                         $field->id,
                         ! empty( $field->label ) ? sprintf( '<label for="%s">%s</label>', esc_attr( $field->id ), esc_html( $field->label ) ) : '',
-                        fn() => $this->renderField( $field ),
+                        fn() => $this->render_field( $field ),
                         $pageParam,
                         $sectionId
                     );
@@ -134,7 +134,7 @@ class Settings {
     /**
      * Renders the HTML markup for an individual settings field.
      */
-    private function renderField( Field $field ): void {
+    private function render_field( Field $field ): void {
         $options = get_option( $this->optionName, [] );
         $value   = $options[ $field->id ] ?? $field->default;
 
@@ -191,7 +191,7 @@ class Settings {
     /**
      * Sanitizes the unified settings array before storage.
      */
-    public function sanitizeSettings( mixed $input ): array {
+    public function sanitize_settings( mixed $input ): array {
         $sanitized = [];
         $input     = is_array( $input ) ? $input : [];
 
@@ -216,7 +216,7 @@ class Settings {
     /**
      * Outputs the structural HTML for the entire settings page.
      */
-    public function renderPage(): void {
+    public function render_page(): void {
         echo '<div class="wrap">';
         echo '<h1>' . esc_html( $this->title ) . '</h1>';
 

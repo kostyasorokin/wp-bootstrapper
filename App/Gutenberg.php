@@ -21,7 +21,7 @@ class Gutenberg {
      */
     #[Hook( 'wp_body_open' )]
     public function remove_svg_filters(): void {
-        ! Options::is( 'gutenberg_remove_svg_filters' ) && remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
+        ! Options::is( 'gutenberg_svg_filters' ) && remove_action( 'wp_body_open', 'wp_global_styles_render_svg_filters' );
     }
 
     /**
@@ -29,7 +29,7 @@ class Gutenberg {
      */
     #[Hook( 'in_admin_header' )]
     public function remove_admin_svg_filters(): void {
-        ! Options::is( 'gutenberg_remove_admin_svg_filters' ) && remove_action( 'in_admin_header', 'wp_global_styles_render_svg_filters' );
+        ! Options::is( 'gutenberg_admin_svg_filters' ) && remove_action( 'in_admin_header', 'wp_global_styles_render_svg_filters' );
     }
 
     /**
@@ -37,7 +37,7 @@ class Gutenberg {
      */
     #[Hook( 'wp_enqueue_scripts', priority: 10 )]
     public function remove_global_styles(): void {
-        ! Options::is( 'gutenberg_remove_global_styles_css' ) && remove_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
+        ! Options::is( 'gutenberg_global_styles_css' ) && remove_action( 'wp_enqueue_scripts', 'wp_enqueue_global_styles' );
     }
 
     /**
@@ -45,7 +45,7 @@ class Gutenberg {
      */
     #[Hook( 'init' )]
     public function remove_duotone_support(): void {
-        ! Options::is( 'gutenberg_remove_duotone_support' ) && remove_filter( 'render_block', 'wp_render_duotone_support' );
+        ! Options::is( 'gutenberg_duotone_support' ) && remove_filter( 'render_block', 'wp_render_duotone_support' );
     }
 
     /**
@@ -53,7 +53,7 @@ class Gutenberg {
      */
     #[Hook( 'init' )]
     public function remove_group_inner_container(): void {
-        ! Options::is( 'gutenberg_remove_group_inner_container' ) && remove_filter( 'render_block', 'wp_restore_group_inner_container' );
+        ! Options::is( 'gutenberg_group_inner_container' ) && remove_filter( 'render_block', 'wp_restore_group_inner_container' );
     }
 
     /**
@@ -61,7 +61,7 @@ class Gutenberg {
      */
     #[Hook( 'init' )]
     public function remove_layout_support(): void {
-        ! Options::is( 'gutenberg_remove_layout_support' ) && remove_filter( 'render_block', 'wp_render_layout_support_flag' );
+        ! Options::is( 'gutenberg_layout_support' ) && remove_filter( 'render_block', 'wp_render_layout_support_flag' );
     }
 
     /**
@@ -70,7 +70,7 @@ class Gutenberg {
      */
     #[Hook( 'should_load_separate_core_block_assets' )]
     public function disable_separate_assets(): bool {
-        return ! Options::is( 'gutenberg_disable_separate_assets' );
+        return ! Options::is( 'gutenberg_separate_core_block_assets' );
     }
 
     /**
@@ -79,13 +79,13 @@ class Gutenberg {
     #[Hook( 'wp_enqueue_scripts', priority: 100 )]
     public function dequeue_block_styles(): void {
         // Main block library
-        ! Options::is( 'gutenberg_dequeue_library' ) && wp_dequeue_style( 'wp-block-library' );
+        ! Options::is( 'gutenberg_wp_block_library' ) && wp_dequeue_style( 'wp-block-library' );
         // Theme-specific block styles
-        ! Options::is( 'gutenberg_dequeue_library_theme' ) && wp_dequeue_style( 'wp-block-library-theme' );
+        ! Options::is( 'gutenberg_wp_block_library_theme' ) && wp_dequeue_style( 'wp-block-library-theme' );
         // Global styles (inline/file)
-        ! Options::is( 'gutenberg_dequeue_global_styles' ) && wp_dequeue_style( 'global-styles' );
+        ! Options::is( 'gutenberg_global_styles' ) && wp_dequeue_style( 'global-styles' );
         // Classic theme styles
-        ! Options::is( 'gutenberg_dequeue_classic_theme' ) && wp_dequeue_style( 'classic-theme-styles' );
+        ! Options::is( 'gutenberg_classic_theme_styles' ) && wp_dequeue_style( 'classic-theme-styles' );
     }
 
     /**
@@ -93,8 +93,8 @@ class Gutenberg {
      */
     #[Hook( 'wp_footer' )]
     public function remove_footer_assets(): void {
-        ! Options::is( 'gutenberg_remove_footer_global_styles' ) && remove_action( 'wp_footer', 'wp_add_global_styles', 1 );
-        ! Options::is( 'gutenberg_remove_footer_svg_filters' ) && remove_action( 'wp_footer', 'wp_add_global_styles_render_svg_filters', 1 );
+        ! Options::is( 'gutenberg_wp_global_styles' ) && remove_action( 'wp_footer', 'wp_add_global_styles', 1 );
+        ! Options::is( 'gutenberg_wp_global_styles_render_svg_filters' ) && remove_action( 'wp_footer', 'wp_add_global_styles_render_svg_filters', 1 );
     }
 
     /**
@@ -114,7 +114,7 @@ class Gutenberg {
      */
     #[Hook( 'init' )]
     public function disable_block_patterns(): void {
-        if ( ! Options::is( 'gutenberg_disable_patterns' ) ) {
+        if ( ! Options::is( 'gutenberg_core_block_patterns' ) ) {
             remove_theme_support( 'core-block-patterns' );
         }
     }

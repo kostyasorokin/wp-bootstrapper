@@ -51,6 +51,86 @@ return array (
       'args' => 3,
     ),
   ),
+  'WPB\\Gutenberg' => 
+  array (
+    0 => 
+    array (
+      'hook' => 'wp_body_open',
+      'method' => 'remove_svg_filters',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    1 => 
+    array (
+      'hook' => 'in_admin_header',
+      'method' => 'remove_admin_svg_filters',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    2 => 
+    array (
+      'hook' => 'wp_enqueue_scripts',
+      'method' => 'remove_global_styles',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    3 => 
+    array (
+      'hook' => 'init',
+      'method' => 'remove_duotone_support',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    4 => 
+    array (
+      'hook' => 'init',
+      'method' => 'remove_group_inner_container',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    5 => 
+    array (
+      'hook' => 'init',
+      'method' => 'remove_layout_support',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    6 => 
+    array (
+      'hook' => 'should_load_separate_core_block_assets',
+      'method' => 'disable_separate_assets',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    7 => 
+    array (
+      'hook' => 'wp_enqueue_scripts',
+      'method' => 'dequeue_block_styles',
+      'priority' => 100,
+      'args' => 1,
+    ),
+    8 => 
+    array (
+      'hook' => 'wp_footer',
+      'method' => 'remove_footer_assets',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    9 => 
+    array (
+      'hook' => 'wp_omit_duotone_inline_styles',
+      'method' => 'omit_duotone_styles',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    10 => 
+    array (
+      'hook' => 'init',
+      'method' => 'disable_block_patterns',
+      'priority' => 10,
+      'args' => 1,
+    ),
+  ),
   'WPB\\Files' => 
   array (
     0 => 

@@ -48,7 +48,7 @@ final class Manager {
 
     /**
      * Initializes the hook registration system.
-     * * Rebuilds the cache if it doesn't exist or if debug mode is active,
+     * Rebuilds the cache if it doesn't exist or if debug mode is active,
      * and then proceeds to register all discovered hooks.
      *
      * @return void
@@ -57,10 +57,10 @@ final class Manager {
     public function boot(): void {
         // Rebuild cache if it's missing or if debugging is enabled
         if ( $this->isDebug || ! file_exists( $this->cacheFile ) ) {
-            $this->buildCache();
+            $this->build_cache();
         }
 
-        $this->registerHooks();
+        $this->register_hooks();
     }
 
     /**
@@ -69,7 +69,7 @@ final class Manager {
      * @return void
      * @throws \ReflectionException
      */
-    private function buildCache(): void {
+    private function build_cache(): void {
         $hooksConfig = [];
 
         $iterator = new RecursiveIteratorIterator(
@@ -79,10 +79,10 @@ final class Manager {
         /** @var SplFileInfo $file */
         foreach ( $iterator as $file ) {
             if ( $file->isFile() && $file->getExtension() === 'php' ) {
-                $className = $this->resolveClassName( $file->getPathname() );
+                $className = $this->resolve_class_name( $file->getPathname() );
 
                 if ( $className && class_exists( $className ) ) {
-                    $classHooks = $this->reflectClassHooks( $className );
+                    $classHooks = $this->reflect_class_hooks( $className );
                     if ( ! empty( $classHooks ) ) {
                         $hooksConfig[ $className ] = $classHooks;
                     }
@@ -118,7 +118,7 @@ final class Manager {
      * @return array Array of hook configurations found in the class.
      * @throws \ReflectionException
      */
-    private function reflectClassHooks( string $className ): array {
+    private function reflect_class_hooks( string $className ): array {
         $hooks      = [];
         $reflection = new ReflectionClass( $className );
 
@@ -143,11 +143,11 @@ final class Manager {
 
     /**
      * Registers hooks directly from the cache file without utilizing Reflection.
-     * * Uses lazy initialization to ensure objects are only instantiated when their hook fires.
+     * Uses lazy initialization to ensure objects are only instantiated when their hook fires.
      *
      * @return void
      */
-    private function registerHooks(): void {
+    private function register_hooks(): void {
         $config = require $this->cacheFile;
 
         foreach ( $config as $className => $hooks ) {
@@ -180,7 +180,7 @@ final class Manager {
      *
      * @return string|null The resolved class name, or null if it cannot be resolved.
      */
-    private function resolveClassName( string $path ): ?string {
+    private function resolve_class_name( string $path ): ?string {
         $relativePath = str_replace( $this->appDir, '', $path );
         $relativePath = ltrim( $relativePath, DIRECTORY_SEPARATOR );
         $classPath    = str_replace( [ '/', '.php' ], [ '\\', '' ], $relativePath );

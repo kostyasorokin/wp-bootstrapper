@@ -28,7 +28,7 @@ class TranslatePress {
      * Dequeue default TranslatePress language switcher styles.
      */
     #[Hook( 'wp_enqueue_scripts', priority: 9000 )]
-    public function dequeueStyle(): void {
+    public function dequeue_style(): void {
         if ( ! $this->is_active() || ! Options::is( 'trp_disable_default_css' ) ) {
             return;
         }

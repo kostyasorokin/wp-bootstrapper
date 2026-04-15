@@ -26,7 +26,7 @@ class Backend {
      * @return void
      */
     #[Hook( 'admin_bar_menu', priority: 999 )]
-    public function removeWpLogo( WP_Admin_Bar $wp_admin_bar ): void {
+    public function remove_wp_logo( WP_Admin_Bar $wp_admin_bar ): void {
         Options::is( 'disable_admin_bar_menu_logo', true ) && $wp_admin_bar->remove_node( 'wp-logo' );
     }
 
@@ -74,7 +74,7 @@ class Backend {
      * @link /wp-admin/tools.php?page=action-scheduler
      */
     #[Hook( 'admin_menu', priority: 9999 )]
-    public function registerActionSchedulerMenu(): void {
+    public function register_action_scheduler_menu(): void {
         global $submenu;
 
         $already_registered = false;
