@@ -95,6 +95,16 @@ class Head {
     }
 
     /**
+     * Set X-Frame-Options header before any output.
+     */
+    #[Hook( 'send_headers' )]
+    public function x_frame_header(): void {
+        Options::is( 'x_frame_options' ) && header( 'X-Frame-Options: DENY' );
+    }
+
+    /**
+     * Add X-Frame-Options meta tag as a fallback.
+     *
      * Prevents embedding the page in an iframe for security.
      * Protects the site against clickjacking attacks.
      */

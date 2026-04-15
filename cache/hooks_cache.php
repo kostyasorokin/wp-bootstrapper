@@ -56,14 +56,14 @@ return array (
     0 => 
     array (
       'hook' => 'big_image_size_threshold',
-      'method' => 'disableBigImageThreshold',
+      'method' => 'big_image_size_threshold',
       'priority' => 10,
       'args' => 1,
     ),
     1 => 
     array (
       'hook' => 'sanitize_file_name',
-      'method' => 'clearFileName',
+      'method' => 'clear_file_name',
       'priority' => 10,
       'args' => 1,
     ),
@@ -174,6 +174,13 @@ return array (
       'args' => 1,
     ),
     4 => 
+    array (
+      'hook' => 'send_headers',
+      'method' => 'x_frame_header',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    5 => 
     array (
       'hook' => 'wp_head',
       'method' => 'x_frame_options',
