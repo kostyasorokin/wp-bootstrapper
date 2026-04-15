@@ -67,6 +67,12 @@ class Config {
                         'description'    => __( 'Stops WordPress from converting plain quotes, dashes, and similar characters into typographic variants.', 'wp-bootstrapper' ),
                         'default'        => false,
                     ] );
+                    $section->add_field( 'disable_emojis', FieldType::CHECKBOX, [
+                        'label'          => 'emoji',
+                        'label_checkbox' => __( 'Disable emojis', 'wp-bootstrapper' ),
+                        'description'    => __( 'Removes emoji scripts, styles, TinyMCE plugin integration, feed conversions, and emoji DNS prefetch hints.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
                 } );
                 $tab->add_section( 'system_javascript', __( 'JavaScript', 'wp-bootstrapper' ), '', function ( Section $section ) {
                     $section->add_field( 'jquery', FieldType::CHECKBOX, [
@@ -169,6 +175,12 @@ class Config {
                     $section->add_field( 'disable_wlwmanifest_link', FieldType::CHECKBOX, [
                         'label'          => 'wlwmanifest_link',
                         'label_checkbox' => __( 'Removes Windows Live Writer manifest link', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->add_field( 'disable_recent_comments_style', FieldType::CHECKBOX, [
+                        'label'          => 'recent_comments_style',
+                        'label_checkbox' => __( 'Remove Recent Comments widget inline styles', 'wp-bootstrapper' ),
+                        'description'    => __( 'Stops WordPress from injecting Recent Comments widget styles into the document head.', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
                     $section->add_field( 'disable_wp_shortlink', FieldType::CHECKBOX, [

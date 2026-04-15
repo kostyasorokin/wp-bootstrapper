@@ -255,47 +255,75 @@ return array (
     ),
     1 => 
     array (
+      'hook' => 'init',
+      'method' => 'disable_emojis',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    2 => 
+    array (
+      'hook' => 'tiny_mce_plugins',
+      'method' => 'disable_emojis_tinymce',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    3 => 
+    array (
+      'hook' => 'wp_resource_hints',
+      'method' => 'disable_emojis_remove_dns_prefetch',
+      'priority' => 10,
+      'args' => 2,
+    ),
+    4 => 
+    array (
+      'hook' => 'widgets_init',
+      'method' => 'remove_recent_comments_style',
+      'priority' => 10,
+      'args' => 1,
+    ),
+    5 => 
+    array (
       'hook' => 'wp_head',
       'method' => 'phone_detection',
       'priority' => 5,
       'args' => 1,
     ),
-    2 => 
+    6 => 
     array (
       'hook' => 'wp_head',
       'method' => 'geo_region',
       'priority' => 5,
       'args' => 1,
     ),
-    3 => 
+    7 => 
     array (
       'hook' => 'send_headers',
       'method' => 'content_security_policy_header',
       'priority' => 10,
       'args' => 1,
     ),
-    4 => 
+    8 => 
     array (
       'hook' => 'wp_head',
       'method' => 'content_security_policy',
       'priority' => 1,
       'args' => 1,
     ),
-    5 => 
+    9 => 
     array (
       'hook' => 'send_headers',
       'method' => 'x_frame_header',
       'priority' => 10,
       'args' => 1,
     ),
-    6 => 
+    10 => 
     array (
       'hook' => 'run_wptexturize',
       'method' => 'run_wptexturize',
       'priority' => 10,
       'args' => 1,
     ),
-    7 => 
+    11 => 
     array (
       'hook' => 'wp_head',
       'method' => 'x_frame_options',

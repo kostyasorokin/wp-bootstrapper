@@ -53,6 +53,85 @@ class Head {
     }
 
     /**
+     * Removes emoji assets and related integrations.
+     */
+    #[Hook( 'init' )]
+    public function disable_emojis(): void {
+        if ( ! Options::is( 'disable_emojis', true ) ) {
+            return;
+        }
+
+        remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+        remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
+        remove_action( 'wp_print_styles', 'print_emoji_styles' );
+        remove_action( 'admin_print_styles', 'print_emoji_styles' );
+        remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
+        remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
+        remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
+    }
+
+    /**
+     * Removes the emoji plugin from TinyMCE.
+     *
+     * @param array $plugins TinyMCE plugin list.
+     *
+     * @return array
+     */
+    #[Hook( 'tiny_mce_plugins' )]
+    public function disable_emojis_tinymce( array $plugins ): array {
+        if ( ! Options::is( 'disable_emojis', true ) ) {
+            return $plugins;
+        }
+
+        return array_values( array_diff( $plugins, [ 'wpemoji' ] ) );
+    }
+
+    /**
+     * Removes the emoji CDN host from DNS prefetch hints.
+     *
+     * @param array  $urls          Resource hint URLs.
+     * @param string $relation_type Resource hint relation type.
+     *
+     * @return array
+     */
+    #[Hook( 'wp_resource_hints', accepted_args: 2 )]
+    public function disable_emojis_remove_dns_prefetch( array $urls, string $relation_type ): array {
+        if ( ! Options::is( 'disable_emojis', true ) || 'dns-prefetch' !== $relation_type ) {
+            return $urls;
+        }
+
+        foreach ( $urls as $key => $url ) {
+            if ( is_string( $url ) && false !== strpos( $url, 's.w.org' ) ) {
+                unset( $urls[ $key ] );
+            }
+        }
+
+        return $urls;
+    }
+
+    /**
+     * Removes Recent Comments widget inline styles from the document head.
+     */
+    #[Hook( 'widgets_init' )]
+    public function remove_recent_comments_style(): void {
+        if ( ! Options::is( 'disable_recent_comments_style', true ) ) {
+            return;
+        }
+
+        global $wp_widget_factory;
+
+        if (
+            isset( $wp_widget_factory->widgets['WP_Widget_Recent_Comments'] ) &&
+            is_object( $wp_widget_factory->widgets['WP_Widget_Recent_Comments'] )
+        ) {
+            remove_action(
+                'wp_head',
+                [ $wp_widget_factory->widgets['WP_Widget_Recent_Comments'], 'recent_comments_style' ]
+            );
+        }
+    }
+
+    /**
      * Disables automatic phone number detection on iOS devices.
      * Adds a meta tag to prevent Safari from automatically turning
      * phone-like numbers into clickable links.
