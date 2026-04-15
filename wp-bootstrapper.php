@@ -35,6 +35,8 @@ $options = get_option( 'wpb_options', [] );
 
 ! empty( $options['disable_wp_cron'] ) && ! defined( 'DISABLE_WP_CRON' ) && define( 'DISABLE_WP_CRON', true );
 ! empty( $options['disallow_file_mods'] ) && ! defined( 'DISALLOW_FILE_MODS' ) && define( 'DISALLOW_FILE_MODS', true );
+! empty( $options['disable_post_revisions'] ) && ! defined( 'WP_POST_REVISIONS' ) && define( 'WP_POST_REVISIONS', false );
+! empty( $options['autosave_interval'] ) && ! defined( 'AUTOSAVE_INTERVAL' ) && define( 'AUTOSAVE_INTERVAL', max( 1, (int) $options['autosave_interval'] ) );
 
 /**
  * Initialize the Bootstrapper Architecture
