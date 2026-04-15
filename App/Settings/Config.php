@@ -48,6 +48,20 @@ class Config {
                         'default'        => false,
                     ] );
                 } );
+                $tab->add_section( 'system_content', __( 'Content', 'wp-bootstrapper' ), '', function ( Section $section ) {
+                    $section->add_field( 'disable_post_revisions', FieldType::CHECKBOX, [
+                        'label'          => 'WP_POST_REVISIONS',
+                        'label_checkbox' => __( 'Disable post revisions', 'wp-bootstrapper' ),
+                        'description'    => __( 'Prevents WordPress from storing post revision history.', 'wp-bootstrapper' ),
+                        'default'        => false,
+                    ] );
+                    $section->add_field( 'autosave_interval', FieldType::NUMBER, [
+                        'label'       => 'AUTOSAVE_INTERVAL',
+                        'description' => __( 'Autosave interval in seconds. Set a high value like 99999 to effectively disable frequent autosaves.', 'wp-bootstrapper' ),
+                        'placeholder' => '99999',
+                        'default'     => 99999,
+                    ] );
+                } );
                 $tab->add_section( 'system_javascript', __( 'JavaScript', 'wp-bootstrapper' ), '', function ( Section $section ) {
                     $section->add_field( 'jquery', FieldType::CHECKBOX, [
                         'label'          => 'jquery.min.js',

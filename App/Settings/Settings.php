@@ -202,7 +202,7 @@ class Settings {
 
                     $sanitized[ $field->id ] = match ( $field->type ) {
                         FieldType::CHECKBOX => ! empty( $raw ),
-                        FieldType::NUMBER => (float) $raw,
+                        FieldType::NUMBER => is_numeric( $raw ) ? max( 1, (int) $raw ) : 0,
                         FieldType::URL => esc_url_raw( $raw ),
                         default => sanitize_text_field( $raw ?? '' ),
                     };
