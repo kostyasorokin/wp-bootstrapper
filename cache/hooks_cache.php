@@ -29,7 +29,7 @@ return array (
     0 => 
     array (
       'hook' => 'init',
-      'method' => 'setRefererCookie',
+      'method' => 'set_referer_cookie',
       'priority' => 1,
       'args' => 1,
     ),

@@ -24,11 +24,8 @@ class Cookies {
      *
      * @return void
      */
-    /**
-     * Sets a cookie with the referrer URL for new users.
-     */
     #[Hook( 'init', priority: 1 )]
-    public function setRefererCookie(): void {
+    public function set_referer_cookie(): void {
         // Check if the feature is enabled in settings
         if ( ! Options::is( 'set_referer_cookie_for_new_users', true ) ) {
             return;
@@ -44,14 +41,27 @@ class Cookies {
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
                 error_log( 'WP Bootstrapper: Headers already sent, "origin" cookie skipped.' ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log.error_log_found
             }
+
             return;
         }
 
-        // Retrieve and sanitize HTTP_REFERER
-        $referer = filter_input( INPUT_SERVER, 'HTTP_REFERER', FILTER_SANITIZE_URL ) ?: 'n/a';
+        // Keep the full referrer URL (including query params) if it's valid.
+        $rawReferer = isset( $_SERVER['HTTP_REFERER'] ) ? wp_unslash( (string) $_SERVER['HTTP_REFERER'] ) : '';
+        $referer    = '' !== $rawReferer && wp_http_validate_url( $rawReferer ) ? $rawReferer : 'n/a';
 
-        // Set the 'origin' cookie for 1 day
-        setcookie( 'origin', $referer, time() + DAY_IN_SECONDS, COOKIEPATH, COOKIE_DOMAIN, is_ssl() );
+        // Set the 'origin' cookie for 1 day with secure defaults.
+        setcookie(
+            'origin',
+            $referer,
+            [
+                'expires' => time() + DAY_IN_SECONDS,
+                'path' => COOKIEPATH ?: '/',
+                'domain' => COOKIE_DOMAIN,
+                'secure' => is_ssl(),
+                'httponly' => true,
+                'samesite' => 'Lax',
+            ]
+        );
     }
 
 }

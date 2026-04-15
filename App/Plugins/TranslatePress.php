@@ -46,7 +46,7 @@ class TranslatePress {
      */
     #[Hook( 'trp_beautify_language_name', accepted_args: 3 )]
     public function shorten_language_names( string $name, string $code, string $english_or_native ): string {
-        if ( ! $this->is_active() || ! Options::is( 'trp_shorten_languages' ) ) {
+        if ( ! $this->is_active() ) {
             return $name;
         }
 
