@@ -77,9 +77,9 @@ class Config {
                 $tab->addSection( 'system_media', __( 'Media', 'wp-bootstrapper' ), '', function ( Section $section ) {
                     $section->addField( 'big_image_size_threshold', FieldType::CHECKBOX, [
                         'label'          => 'big_image_size_threshold',
-                        'label_checkbox' => __( 'Disable automatic scaling of large images', 'wp-bootstrapper' ),
-                        'description'    => __( 'When enabled, WordPress will not downscale images larger than 2560px.', 'wp-bootstrapper' ),
-                        'default'        => true,
+                        'label_checkbox' => __( 'Automatic scaling of large images', 'wp-bootstrapper' ),
+                        'description'    => __( 'When enabled, WordPress will downscale images larger than 2560px.', 'wp-bootstrapper' ),
+                        'default'        => false,
                     ] );
                 } );
                 $tab->addSection( 'system_files', __( 'Files', 'wp-bootstrapper' ), '', function ( Section $section ) {
@@ -123,7 +123,7 @@ class Config {
                         'label_checkbox' => __( 'Removes the WordPress version tag', 'wp-bootstrapper' ),
                         'default'        => true,
                     ] );
-                    $section->addField( '', FieldType::CHECKBOX, [
+                    $section->addField( 'automatic_feed_links', FieldType::CHECKBOX, [
                         'label'          => 'automatic_feed_links',
                         'label_checkbox' => __( 'RSS Feed Links', 'wp-bootstrapper' ),
                         'description'    => __( 'Adds links to RSS feeds directly into the head. Uncheck this if you want to remove RSS discovery links from your site.', 'wp-bootstrapper' ),
