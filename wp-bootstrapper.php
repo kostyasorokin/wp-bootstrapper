@@ -28,6 +28,11 @@ define( 'WPB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPB_OPTION_PREFIX', '_wpb_' );
 
 /**
+ * Load security hardening early so activation/deactivation hooks can use it.
+ */
+require_once __DIR__ . '/App/Security.php';
+
+/**
  * Immediate Constants Bootstrap
  * We use direct get_option calls to define system constants before the engine starts.
  */
@@ -77,6 +82,7 @@ add_action( 'plugins_loaded', function (): void {
  */
 register_activation_hook( __FILE__, static function (): void {
     add_option( 'wpb_flush_rewrite_rules_flag', true );
+    \WPB\Security::activate();
 } );
 
 /**
@@ -84,6 +90,7 @@ register_activation_hook( __FILE__, static function (): void {
  */
 register_deactivation_hook( __FILE__, static function (): void {
     flush_rewrite_rules( false );
+    \WPB\Security::deactivate();
 } );
 
 /**
