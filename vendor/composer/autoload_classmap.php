@@ -13,6 +13,7 @@ return array(
     'WPB\\Core\\Manager' => $baseDir . '/App/Core/Manager.php',
     'WPB\\Cron' => $baseDir . '/App/Cron.php',
     'WPB\\Files' => $baseDir . '/App/Files.php',
+    'WPB\\Gutenberg' => $baseDir . '/App/Gutenberg.php',
     'WPB\\Head' => $baseDir . '/App/Head.php',
     'WPB\\JavaScript' => $baseDir . '/App/JavaScript.php',
     'WPB\\Plugins\\TranslatePress' => $baseDir . '/App/Plugins/TranslatePress.php',

@@ -28,6 +28,7 @@ class ComposerStaticInit284d67cd56f4336f1da32113768141b9
         'WPB\\Core\\Manager' => __DIR__ . '/../..' . '/App/Core/Manager.php',
         'WPB\\Cron' => __DIR__ . '/../..' . '/App/Cron.php',
         'WPB\\Files' => __DIR__ . '/../..' . '/App/Files.php',
+        'WPB\\Gutenberg' => __DIR__ . '/../..' . '/App/Gutenberg.php',
         'WPB\\Head' => __DIR__ . '/../..' . '/App/Head.php',
         'WPB\\JavaScript' => __DIR__ . '/../..' . '/App/JavaScript.php',
         'WPB\\Plugins\\TranslatePress' => __DIR__ . '/../..' . '/App/Plugins/TranslatePress.php',

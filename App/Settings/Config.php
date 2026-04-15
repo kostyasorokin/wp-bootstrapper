@@ -211,6 +211,100 @@ class Config {
                     ] );
                 } );
             } )
+            ->addTab( 'gutenberg', __( 'Gutenberg', 'wp-bootstrapper' ), function ( Tab $tab ) {
+                $tab->addSection( 'gutenberg_main', '', '', function ( Section $section ) {
+                    $section->addField( 'gutenberg_remove_svg_filters', FieldType::CHECKBOX, [
+                        'label'          => 'wp_global_styles_render_svg_filters',
+                        'label_checkbox' => __( 'Duotone SVG filters from wp_body_open', 'wp-bootstrapper' ),
+                        'description'    => __( 'Renders SVG filters used for duotone effects immediately after the body tag.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_admin_svg_filters', FieldType::CHECKBOX, [
+                        'label'          => 'wp_global_styles_render_svg_filters',
+                        'label_checkbox' => __( 'Duotone SVG filters from in_admin_header', 'wp-bootstrapper' ),
+                        'description'    => __( 'Renders SVG filters in the WordPress admin bar / header area.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_global_styles_css', FieldType::CHECKBOX, [
+                        'label'          => 'wp_enqueue_global_styles',
+                        'label_checkbox' => __( 'Global Styles Enqueue', 'wp-bootstrapper' ),
+                        'description'    => __( 'Loads the main Global Styles (theme.json) CSS on the frontend.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_duotone_support', FieldType::CHECKBOX, [
+                        'label'          => 'wp_render_duotone_support',
+                        'label_checkbox' => __( 'Duotone filter Rendering', 'wp-bootstrapper' ),
+                        'description'    => __( 'Support for rendering duotone filters for blocks.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_group_inner_container', FieldType::CHECKBOX, [
+                        'label'          => 'wp_restore_group_inner_container',
+                        'label_checkbox' => __( 'Group Inner Container', 'wp-bootstrapper' ),
+                        'description'    => __( 'Restores the legacy .wp-block-group__inner-container wrapper for Group blocks.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_layout_support', FieldType::CHECKBOX, [
+                        'label'          => 'wp_render_layout_support_flag',
+                        'label_checkbox' => __( 'Layout Support Flag', 'wp-bootstrapper' ),
+                        'description'    => __( 'Adds layout-specific CSS classes and inline styles to blocks.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_disable_separate_assets', FieldType::CHECKBOX, [
+                        'label'          => 'should_load_separate_core_block_assets',
+                        'label_checkbox' => __( 'Separate core block assets loading', 'wp-bootstrapper' ),
+                        'description'    => __( 'Loads only the CSS for the blocks present on the page instead of one giant file.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_dequeue_library', FieldType::CHECKBOX, [
+                        'label'          => 'wp-block-library',
+                        'label_checkbox' => __( 'Block Library CSS', 'wp-bootstrapper' ),
+                        'description'    => __( 'The core CSS for all standard WordPress blocks.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_dequeue_library_theme', FieldType::CHECKBOX, [
+                        'label'          => 'wp-block-library-theme',
+                        'label_checkbox' => __( 'Block Library Theme', 'wp-bootstrapper' ),
+                        'description'    => __( 'Visual styles for core blocks that make them look like the default theme.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_dequeue_global_styles', FieldType::CHECKBOX, [
+                        'label'          => 'global-styles',
+                        'label_checkbox' => __( 'Global Styles CSS', 'wp-bootstrapper' ),
+                        'description'    => __( 'CSS generated from theme.json settings.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_dequeue_classic_theme', FieldType::CHECKBOX, [
+                        'label'          => 'classic-theme-styles',
+                        'label_checkbox' => __( 'Classic Theme Styles', 'wp-bootstrapper' ),
+                        'description'    => __( 'Legacy styles for block elements in classic (non-block) themes.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_footer_global_styles', FieldType::CHECKBOX, [
+                        'label'          => 'wp_add_global_styles',
+                        'label_checkbox' => __( 'Footer Global Styles', 'wp-bootstrapper' ),
+                        'description'    => __( 'Inline global styles normally added to the footer.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_remove_footer_svg_filters', FieldType::CHECKBOX, [
+                        'label'          => 'wp_add_global_styles_render_svg_filters',
+                        'label_checkbox' => __( 'Footer SVG Filters', 'wp-bootstrapper' ),
+                        'description'    => __( 'Renders remaining SVG filters in the site footer.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_omit_duotone_inline', FieldType::CHECKBOX, [
+                        'label'          => 'wp_omit_duotone_inline_styles',
+                        'label_checkbox' => __( 'Omit Inline Duotone', 'wp-bootstrapper' ),
+                        'description'    => __( 'By default, WP prevents some duotone styles from being inline. Keep enabled for default behavior.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                    $section->addField( 'gutenberg_disable_patterns', FieldType::CHECKBOX, [
+                        'label'          => 'core-block-patterns',
+                        'label_checkbox' => __( 'Block Patterns', 'wp-bootstrapper' ),
+                        'description'    => __( 'The core block pattern library provided by WordPress.', 'wp-bootstrapper' ),
+                        'default'        => true,
+                    ] );
+                } );
+            } )
         //                ->addTab( 'telegram', __( 'Telegram Notifications', 'wp-bootstrapper' ), function ( Tab $tab ) {
         //                    $tab->addSection( 'bot_settings', __( 'Bot Settings', 'wp-bootstrapper' ), '', function ( Section $section ) {
         //                        $section->addField( 'TelegramBotToken', FieldType::TEXT, [
