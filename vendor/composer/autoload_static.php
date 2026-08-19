@@ -7,14 +7,14 @@ namespace Composer\Autoload;
 class ComposerStaticInit284d67cd56f4336f1da32113768141b9
 {
     public static $prefixLengthsPsr4 = array (
-        'W' => 
+        'K' =>
         array (
-            'WPB\\' => 4,
+            'KonstantinSorokin\\Bootstrapper\\' => 31,
         ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'WPB\\' => 
+        'KonstantinSorokin\\Bootstrapper\\' =>
         array (
             0 => __DIR__ . '/../..' . '/App',
         ),
@@ -22,27 +22,27 @@ class ComposerStaticInit284d67cd56f4336f1da32113768141b9
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'WPB\\Attributes\\Hook' => __DIR__ . '/../..' . '/App/Attributes/Hook.php',
-        'WPB\\Backend' => __DIR__ . '/../..' . '/App/Backend.php',
-        'WPB\\Cookies' => __DIR__ . '/../..' . '/App/Cookies.php',
-        'WPB\\Core\\Manager' => __DIR__ . '/../..' . '/App/Core/Manager.php',
-        'WPB\\Cron' => __DIR__ . '/../..' . '/App/Cron.php',
-        'WPB\\Files' => __DIR__ . '/../..' . '/App/Files.php',
-        'WPB\\Gutenberg' => __DIR__ . '/../..' . '/App/Gutenberg.php',
-        'WPB\\Head' => __DIR__ . '/../..' . '/App/Head.php',
-        'WPB\\JavaScript' => __DIR__ . '/../..' . '/App/JavaScript.php',
-        'WPB\\Plugins\\ContactForm7' => __DIR__ . '/../..' . '/App/Plugins/ContactForm7.php',
-        'WPB\\Plugins\\TranslatePress' => __DIR__ . '/../..' . '/App/Plugins/TranslatePress.php',
-        'WPB\\Security' => __DIR__ . '/../..' . '/App/Security.php',
-        'WPB\\Settings\\Config' => __DIR__ . '/../..' . '/App/Settings/Config.php',
-        'WPB\\Settings\\Definitions\\Field' => __DIR__ . '/../..' . '/App/Settings/Definitions/Field.php',
-        'WPB\\Settings\\Definitions\\Section' => __DIR__ . '/../..' . '/App/Settings/Definitions/Section.php',
-        'WPB\\Settings\\Definitions\\Tab' => __DIR__ . '/../..' . '/App/Settings/Definitions/Tab.php',
-        'WPB\\Settings\\Enums\\FieldType' => __DIR__ . '/../..' . '/App/Settings/Enums/FieldType.php',
-        'WPB\\Settings\\Helpers\\Options' => __DIR__ . '/../..' . '/App/Settings/Helpers/Options.php',
-        'WPB\\Settings\\Settings' => __DIR__ . '/../..' . '/App/Settings/Settings.php',
-        'WPB\\Theme' => __DIR__ . '/../..' . '/App/Theme.php',
-        'WPB\\Users' => __DIR__ . '/../..' . '/App/Users.php',
+        'KonstantinSorokin\\Bootstrapper\\Attributes\\Hook' => __DIR__ . '/../..' . '/App/Attributes/Hook.php',
+        'KonstantinSorokin\\Bootstrapper\\Backend' => __DIR__ . '/../..' . '/App/Backend.php',
+        'KonstantinSorokin\\Bootstrapper\\Cookies' => __DIR__ . '/../..' . '/App/Cookies.php',
+        'KonstantinSorokin\\Bootstrapper\\Core\\Manager' => __DIR__ . '/../..' . '/App/Core/Manager.php',
+        'KonstantinSorokin\\Bootstrapper\\Cron' => __DIR__ . '/../..' . '/App/Cron.php',
+        'KonstantinSorokin\\Bootstrapper\\Files' => __DIR__ . '/../..' . '/App/Files.php',
+        'KonstantinSorokin\\Bootstrapper\\Gutenberg' => __DIR__ . '/../..' . '/App/Gutenberg.php',
+        'KonstantinSorokin\\Bootstrapper\\Head' => __DIR__ . '/../..' . '/App/Head.php',
+        'KonstantinSorokin\\Bootstrapper\\JavaScript' => __DIR__ . '/../..' . '/App/JavaScript.php',
+        'KonstantinSorokin\\Bootstrapper\\Plugins\\ContactForm7' => __DIR__ . '/../..' . '/App/Plugins/ContactForm7.php',
+        'KonstantinSorokin\\Bootstrapper\\Plugins\\TranslatePress' => __DIR__ . '/../..' . '/App/Plugins/TranslatePress.php',
+        'KonstantinSorokin\\Bootstrapper\\Security' => __DIR__ . '/../..' . '/App/Security.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Config' => __DIR__ . '/../..' . '/App/Settings/Config.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Definitions\\Field' => __DIR__ . '/../..' . '/App/Settings/Definitions/Field.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Definitions\\Section' => __DIR__ . '/../..' . '/App/Settings/Definitions/Section.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Definitions\\Tab' => __DIR__ . '/../..' . '/App/Settings/Definitions/Tab.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Enums\\FieldType' => __DIR__ . '/../..' . '/App/Settings/Enums/FieldType.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Helpers\\Options' => __DIR__ . '/../..' . '/App/Settings/Helpers/Options.php',
+        'KonstantinSorokin\\Bootstrapper\\Settings\\Settings' => __DIR__ . '/../..' . '/App/Settings/Settings.php',
+        'KonstantinSorokin\\Bootstrapper\\Theme' => __DIR__ . '/../..' . '/App/Theme.php',
+        'KonstantinSorokin\\Bootstrapper\\Users' => __DIR__ . '/../..' . '/App/Users.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

@@ -1,4 +1,4 @@
-=== WP Bootstrapper ===
+=== KS Bootstrapper ===
 Contributors: kostyasorokin
 Tags:
 Requires at least: 6.7

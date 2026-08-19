@@ -4,15 +4,15 @@
  *
  * Handles the addition of custom intervals to the WordPress cron schedules.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Cron
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
-use WPB\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -30,19 +30,19 @@ class Cron {
         $new_schedules = [
             'month'        => [
                 'interval' => MONTH_IN_SECONDS,
-                'display'  => esc_html__( 'Every month', 'wp-bootstrapper' ),
+                'display'  => esc_html__( 'Every month', 'ks-bootstrapper' ),
             ],
             'three_months' => [
                 'interval' => MONTH_IN_SECONDS * 3,
-                'display'  => esc_html__( 'Every three months', 'wp-bootstrapper' ),
+                'display'  => esc_html__( 'Every three months', 'ks-bootstrapper' ),
             ],
             'semiannually' => [
                 'interval' => MONTH_IN_SECONDS * 6,
-                'display'  => esc_html__( 'Semiannually', 'wp-bootstrapper' ),
+                'display'  => esc_html__( 'Semiannually', 'ks-bootstrapper' ),
             ],
             'yearly'       => [
                 'interval' => YEAR_IN_SECONDS,
-                'display'  => esc_html__( 'Yearly', 'wp-bootstrapper' ),
+                'display'  => esc_html__( 'Yearly', 'ks-bootstrapper' ),
             ],
         ];
 

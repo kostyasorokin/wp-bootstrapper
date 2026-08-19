@@ -2,15 +2,15 @@
 /**
  * Gutenberg & Block Editor Optimization
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Core
  * @author     Konstantin Sorokin
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 

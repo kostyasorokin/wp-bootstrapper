@@ -2,17 +2,17 @@
 /**
  * JavaScript Optimization and Management
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Scripts
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
 use WP_Scripts;
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 

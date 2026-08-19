@@ -2,17 +2,17 @@
 /**
  * Class:  Backend
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Backend
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
 use WP_Admin_Bar;
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -92,8 +92,8 @@ class Backend {
         // Register only if missing and user has permissions
         if ( ! $already_registered && current_user_can( 'manage_options' ) ) {
             add_management_page(
-                __( 'Action Scheduler', 'wp-bootstrapper' ),
-                __( 'Action Scheduler', 'wp-bootstrapper' ),
+                __( 'Action Scheduler', 'ks-bootstrapper' ),
+                __( 'Action Scheduler', 'ks-bootstrapper' ),
                 'manage_options',
                 'action-scheduler'
             );

@@ -2,8 +2,8 @@
 # This file is distributed under the GPL v3 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: WP Bootstrapper 1.0.0\n"
-"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wp-bootstrapper\n"
+"Project-Id-Version: KS Bootstrapper 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/ks-bootstrapper\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -12,25 +12,25 @@ msgstr ""
 "POT-Creation-Date: 2026-04-11T17:09:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: wp-bootstrapper\n"
+"X-Domain: ks-bootstrapper\n"
 
 #. Plugin Name of the plugin
-#: wp-bootstrapper.php
-msgid "WP Bootstrapper"
+#: ks-bootstrapper.php
+msgid "KS Bootstrapper"
 msgstr ""
 
 #. Description of the plugin
-#: wp-bootstrapper.php
+#: ks-bootstrapper.php
 msgid "Foundational set of tools to initialize and optimize WordPress."
 msgstr ""
 
 #. Author of the plugin
-#: wp-bootstrapper.php
+#: ks-bootstrapper.php
 msgid "Konstantin Sorokin"
 msgstr ""
 
 #. Author URI of the plugin
-#: wp-bootstrapper.php
+#: ks-bootstrapper.php
 msgid "https://konstantinsorokin.com"
 msgstr ""
 
@@ -174,6 +174,6 @@ msgstr ""
 msgid "Sets a cookie named \"origin\" for non-admin visitors if it hasn’t been set yet"
 msgstr ""
 
-#: wp-bootstrapper.php:67
-msgid "WP Bootstrapper: Please run \"composer install\" in the plugin directory to activate it."
+#: ks-bootstrapper.php:67
+msgid "KS Bootstrapper: Please run \"composer install\" in the plugin directory to activate it."
 msgstr ""

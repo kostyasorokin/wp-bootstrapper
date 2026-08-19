@@ -6,13 +6,13 @@
  * strict typing and prevents the use of unsupported or invalid HTML input types
  * when generating the plugin's settings forms.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Settings\Enums
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Settings\Enums;
+namespace KonstantinSorokin\Bootstrapper\Settings\Enums;
 
 defined( 'ABSPATH' ) || exit;
 

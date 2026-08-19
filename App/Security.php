@@ -2,21 +2,21 @@
 /**
  * Security hardening helpers.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Security
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
 use DOMDocument;
 use DOMElement;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -25,22 +25,22 @@ class Security {
     /**
      * Cron event name for uploads hardening.
      */
-    private const string CRON_HOOK = 'wpb_security_daily';
+    private const string CRON_HOOK = 'ks_bootstrapper_security_daily';
 
     /**
      * Marker used for the managed .htaccess block.
      */
-    private const string HTACCESS_MARKER = 'WP Bootstrapper Uploads Protection';
+    private const string HTACCESS_MARKER = 'KS Bootstrapper Uploads Protection';
 
     /**
      * Marker used for the managed web.config rule.
      */
-    private const string WEB_CONFIG_RULE = 'WPBootstrapperUploadsProtection';
+    private const string WEB_CONFIG_RULE = 'KSBootstrapperUploadsProtection';
 
     /**
      * Transient key for once-per-day self-heal checks.
      */
-    private const string SELF_HEAL_TRANSIENT = 'wpb_security_self_heal_due';
+    private const string SELF_HEAL_TRANSIENT = 'ks_bootstrapper_security_self_heal_due';
 
     /**
      * Maximum number of files to inspect in a single cleanup pass.
@@ -363,7 +363,7 @@ class Security {
      */
     private static function atomic_write( string $path, string $contents ): bool {
         $directory = dirname( $path );
-        $temporary = tempnam( $directory, 'wpb_' );
+        $temporary = tempnam( $directory, 'ks_bootstrapper_' );
 
         if ( false === $temporary ) {
             return false;
@@ -396,7 +396,7 @@ class Security {
      */
     private static function debug_log( string $message ): void {
         if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            error_log( 'WP Bootstrapper Security: ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+            error_log( 'KS Bootstrapper Security: ' . $message ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
         }
     }
 

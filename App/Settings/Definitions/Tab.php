@@ -5,13 +5,13 @@
  * Represents a distinct navigation tab within the settings page. Acts as a structural
  * container for related settings sections and provides a fluent interface for building them.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Settings\Definitions
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Settings\Definitions;
+namespace KonstantinSorokin\Bootstrapper\Settings\Definitions;
 
 defined( 'ABSPATH' ) || exit;
 

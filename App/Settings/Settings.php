@@ -6,17 +6,17 @@
  * using a modern, fluent, and strictly typed Object-Oriented approach. It stores all
  * configuration fields in a single database option array to optimize database queries.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Settings
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Settings;
+namespace KonstantinSorokin\Bootstrapper\Settings;
 
-use WPB\Settings\Definitions\Tab;
-use WPB\Settings\Definitions\Field;
-use WPB\Settings\Enums\FieldType;
+use KonstantinSorokin\Bootstrapper\Settings\Definitions\Tab;
+use KonstantinSorokin\Bootstrapper\Settings\Definitions\Field;
+use KonstantinSorokin\Bootstrapper\Settings\Enums\FieldType;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -248,7 +248,7 @@ class Settings {
           document.addEventListener('DOMContentLoaded', () => {
               const tabs = document.querySelectorAll('.nav-tab');
               const contents = document.querySelectorAll('.settings-tab-content');
-              const storageKey = 'wpb_active_tab_<?php echo esc_js( $this->pageId ); ?>';
+              const storageKey = 'ks_bootstrapper_active_tab_<?php echo esc_js( $this->pageId ); ?>';
               let activeIndex = localStorage.getItem(storageKey) || 0;
 
               function activateTab(index) {

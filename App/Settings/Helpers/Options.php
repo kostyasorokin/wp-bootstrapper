@@ -5,13 +5,13 @@
  * Provides a centralized, static interface for accessing plugin settings
  * with internal caching to minimize database hits.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Settings
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Settings\Helpers;
+namespace KonstantinSorokin\Bootstrapper\Settings\Helpers;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -35,7 +35,7 @@ final class Options {
     public static function get( string $key, mixed $default = false ): mixed {
         if ( null === self::$data ) {
             // Access the option name defined in your Settings logic
-            self::$data = get_option( 'wpb_options', [] );
+            self::$data = get_option( 'ks_bootstrapper_options', [] );
         }
 
         return self::$data[ $key ] ?? $default;

@@ -6,15 +6,15 @@
  * to store field attributes, ensuring strict typing and immutability from the outside
  * after instantiation.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Settings\Definitions
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Settings\Definitions;
+namespace KonstantinSorokin\Bootstrapper\Settings\Definitions;
 
-use WPB\Settings\Enums\FieldType;
+use KonstantinSorokin\Bootstrapper\Settings\Enums\FieldType;
 
 defined( 'ABSPATH' ) || exit;
 

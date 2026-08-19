@@ -1,18 +1,18 @@
-# WP Bootstrapper
+# KS Bootstrapper
 
-![Code Quality](https://github.com/kostyasorokin/wp-bootstrapper/actions/workflows/code-quality.yml/badge.svg)
+![Code Quality](https://github.com/kostyasorokin/wp-ks-bootstrapper/actions/workflows/code-quality.yml/badge.svg)
 ![PHP Version](https://img.shields.io/badge/PHP-8.4+-blue.svg)
 ![WordPress](https://img.shields.io/badge/WordPress-6.7+-23282d.svg)
 ![License](https://img.shields.io/badge/License-GPLv3-green.svg)
 ![Architecture](https://img.shields.io/badge/Architecture-OOP%20%7C%20PSR--4-orange.svg)
 
-**WP Bootstrapper** is a foundational toolkit designed for modern WordPress development. It replaces the traditional "spaghetti-style" plugin initialization with a clean, attribute-driven architecture, focusing on performance, security, and developer experience.
+**KS Bootstrapper** is a foundational toolkit designed for modern WordPress development. It replaces the traditional "spaghetti-style" plugin initialization with a clean, attribute-driven architecture, focusing on performance, security, and developer experience.
 
 ---
 
 ## 🚀 Core Philosophy
 
-Unlike traditional plugins that load dozens of files and hooks on every request, WP Bootstrapper uses a **Lazy-Loading Attribute System**.
+Unlike traditional plugins that load dozens of files and hooks on every request, KS Bootstrapper uses a **Lazy-Loading Attribute System**.
 
 * **Zero Overhead:** Hooks are registered only when needed, using a high-performance static cache.
 * **Modern PHP 8.4+:** Leverages the latest language features like Attributes, Readonly properties, and Property Hooks.
@@ -38,7 +38,7 @@ Unlike traditional plugins that load dozens of files and hooks on every request,
 * Clone or download the repository into your WordPress plugins folder:
    ```bash
    cd wp-content/plugins/
-   git clone https://github.com/kostyasorokin/wp-bootstrapper.git
+   git clone https://github.com/kostyasorokin/wp-ks-bootstrapper.git
   ```
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 

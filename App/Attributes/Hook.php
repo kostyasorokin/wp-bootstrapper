@@ -2,13 +2,13 @@
 /**
  * Hook Attribute Definition
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Attributes
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Attributes;
+namespace KonstantinSorokin\Bootstrapper\Attributes;
 
 use Attribute;
 

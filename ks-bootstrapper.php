@@ -1,18 +1,18 @@
 <?php
 /**
- * Plugin Name: WP Bootstrapper
+ * Plugin Name: KS Bootstrapper
  * Description: Foundational set of tools to initialize and optimize WordPress.
  * Version: 1.0.0
  * Author: Konstantin Sorokin
  * Author URI: https://konstantinsorokin.com
- * Text Domain: wp-bootstrapper
+ * Text Domain: ks-bootstrapper
  * Domain Path: /languages/
  * Requires at least: 6.7
  * Requires PHP: 8.4
  * License: GPL v3 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @author     Konstantin Sorokin
  * @license    GPL-3.0-or-later
  * @link       https://konstantinsorokin.com
@@ -23,9 +23,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin Constants
  */
-define( 'WPB_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'WPB_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'WPB_OPTION_PREFIX', '_wpb_' );
+define( 'KS_BOOTSTRAPPER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'KS_BOOTSTRAPPER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'KS_BOOTSTRAPPER_OPTION_PREFIX', '_ks_bootstrapper_' );
 
 /**
  * Load security hardening early so activation/deactivation hooks can use it.
@@ -36,7 +36,7 @@ require_once __DIR__ . '/App/Security.php';
  * Immediate Constants Bootstrap
  * We use direct get_option calls to define system constants before the engine starts.
  */
-$options = get_option( 'wpb_options', [] );
+$options = get_option( 'ks_bootstrapper_options', [] );
 
 ! empty( $options['disable_wp_cron'] ) && ! defined( 'DISABLE_WP_CRON' ) && define( 'DISABLE_WP_CRON', true );
 ! empty( $options['disallow_file_mods'] ) && ! defined( 'DISALLOW_FILE_MODS' ) && define( 'DISALLOW_FILE_MODS', true );
@@ -58,9 +58,9 @@ add_action( 'plugins_loaded', function (): void {
         // Enable cache regeneration only if WP_DEBUG is enabled
         $isDebug = defined( 'WP_DEBUG' ) && WP_DEBUG;
 
-        $manager = new \WPB\Core\Manager(
+        $manager = new \KonstantinSorokin\Bootstrapper\Core\Manager(
             appDir: __DIR__ . '/App',
-            namespacePrefix: 'WPB\\',
+            namespacePrefix: 'KonstantinSorokin\\Bootstrapper\\',
             cacheFile: __DIR__ . '/cache/hooks_cache.php', // Ensure the 'cache' folder exists and is writable
             isDebug: $isDebug
         );
@@ -71,7 +71,7 @@ add_action( 'plugins_loaded', function (): void {
         add_action( 'admin_notices', function (): void {
             printf(
                 '<div class="error"><p>%s</p></div>',
-                esc_html__( 'WP Bootstrapper: Please run "composer install" in the plugin directory to activate it.', 'wp-bootstrapper' )
+                esc_html__( 'KS Bootstrapper: Please run "composer install" in the plugin directory to activate it.', 'ks-bootstrapper' )
             );
         } );
     }
@@ -81,8 +81,8 @@ add_action( 'plugins_loaded', function (): void {
  * Plugin activation hook
  */
 register_activation_hook( __FILE__, static function (): void {
-    add_option( 'wpb_flush_rewrite_rules_flag', true );
-    \WPB\Security::activate();
+    add_option( 'ks_bootstrapper_flush_rewrite_rules_flag', true );
+    \KonstantinSorokin\Bootstrapper\Security::activate();
 } );
 
 /**
@@ -90,7 +90,7 @@ register_activation_hook( __FILE__, static function (): void {
  */
 register_deactivation_hook( __FILE__, static function (): void {
     flush_rewrite_rules( false );
-    \WPB\Security::deactivate();
+    \KonstantinSorokin\Bootstrapper\Security::deactivate();
 } );
 
 /**
@@ -98,8 +98,8 @@ register_deactivation_hook( __FILE__, static function (): void {
  * Runs on 'init' but ONLY executes once after plugin activation
  */
 add_action( 'init', static function (): void {
-    if ( get_option( 'wpb_flush_rewrite_rules_flag' ) ) {
+    if ( get_option( 'ks_bootstrapper_flush_rewrite_rules_flag' ) ) {
         flush_rewrite_rules( false );
-        delete_option( 'wpb_flush_rewrite_rules_flag' );
+        delete_option( 'ks_bootstrapper_flush_rewrite_rules_flag' );
     }
 }, 99 );

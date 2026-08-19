@@ -5,15 +5,15 @@
  * Represents a logical grouping of settings fields within a specific tab.
  * Acts as a structural container and provides a fluent interface for registering fields.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Settings\Definitions
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Settings\Definitions;
+namespace KonstantinSorokin\Bootstrapper\Settings\Definitions;
 
-use WPB\Settings\Enums\FieldType;
+use KonstantinSorokin\Bootstrapper\Settings\Enums\FieldType;
 
 defined( 'ABSPATH' ) || exit;
 

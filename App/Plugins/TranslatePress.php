@@ -2,16 +2,16 @@
 /**
  * TranslatePress Integration and Cleanup
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Plugins
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB\Plugins;
+namespace KonstantinSorokin\Bootstrapper\Plugins;
 
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 

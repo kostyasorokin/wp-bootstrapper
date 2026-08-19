@@ -4,16 +4,16 @@
  *
  * Handles modifications to user profiles and contact methods.
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Users
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -35,8 +35,8 @@ class Users {
             'facebook'         => 'Facebook',
             'instagram'        => 'Instagram',
             'telegram'         => 'Telegram',
-            'telegram_channel' => 'Telegram ' . __( 'channel', 'wp-bootstrapper' ),
-            'telegram_group'   => 'Telegram ' . __( 'group', 'wp-bootstrapper' ),
+            'telegram_channel' => 'Telegram ' . __( 'channel', 'ks-bootstrapper' ),
+            'telegram_group'   => 'Telegram ' . __( 'group', 'ks-bootstrapper' ),
         ];
     }
 

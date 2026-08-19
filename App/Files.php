@@ -6,16 +6,16 @@
  *
  * Based on: https://github.com/WPArtisan/wpartisan-filename-sanitizer
  *
- * @package    WP_Bootstrapper
+ * @package    KS_Bootstrapper
  * @subpackage Files
  * @author     Konstantin Sorokin
  * @link       https://konstantinsorokin.com
  */
 
-namespace WPB;
+namespace KonstantinSorokin\Bootstrapper;
 
-use WPB\Attributes\Hook;
-use WPB\Settings\Helpers\Options;
+use KonstantinSorokin\Bootstrapper\Attributes\Hook;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -75,7 +75,7 @@ class Files {
          * @param string $sanitized_filename The sanitized filename.
          * @param string $filename           Original filename.
          */
-        return (string) apply_filters( 'wpb_sanitize_file_name', $sanitized_filename, $filename );
+        return (string) apply_filters( 'ks_bootstrapper_sanitize_file_name', $sanitized_filename, $filename );
     }
 
     /**
@@ -112,20 +112,20 @@ class Files {
         }
 
         if ( ! Options::is( 'allow_svg_uploads', false ) ) {
-            $file['error'] = esc_html__( 'SVG uploads are disabled by site settings.', 'wp-bootstrapper' );
+            $file['error'] = esc_html__( 'SVG uploads are disabled by site settings.', 'ks-bootstrapper' );
 
             return $file;
         }
 
         if ( ! $this->can_upload_svg() ) {
-            $file['error'] = esc_html__( 'You are not allowed to upload SVG files.', 'wp-bootstrapper' );
+            $file['error'] = esc_html__( 'You are not allowed to upload SVG files.', 'ks-bootstrapper' );
 
             return $file;
         }
 
         $content = @file_get_contents( (string) $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
         if ( false === $content || '' === $content ) {
-            $file['error'] = esc_html__( 'Unable to read uploaded SVG file.', 'wp-bootstrapper' );
+            $file['error'] = esc_html__( 'Unable to read uploaded SVG file.', 'ks-bootstrapper' );
 
             return $file;
         }
@@ -133,7 +133,7 @@ class Files {
         if ( 'svgz' === $ext ) {
             $decoded = @gzdecode( $content ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
             if ( false === $decoded ) {
-                $file['error'] = esc_html__( 'Invalid compressed SVG (.svgz) file.', 'wp-bootstrapper' );
+                $file['error'] = esc_html__( 'Invalid compressed SVG (.svgz) file.', 'ks-bootstrapper' );
 
                 return $file;
             }
@@ -142,7 +142,7 @@ class Files {
         }
 
         if ( ! $this->is_safe_svg( $content ) ) {
-            $file['error'] = esc_html__( 'Unsafe SVG content detected. Upload blocked.', 'wp-bootstrapper' );
+            $file['error'] = esc_html__( 'Unsafe SVG content detected. Upload blocked.', 'ks-bootstrapper' );
         }
 
         return $file;
@@ -156,7 +156,7 @@ class Files {
             return false;
         }
 
-        $required_capability = (string) apply_filters( 'wpb_svg_upload_capability', 'manage_options' );
+        $required_capability = (string) apply_filters( 'ks_bootstrapper_svg_upload_capability', 'manage_options' );
 
         return current_user_can( $required_capability );
     }
