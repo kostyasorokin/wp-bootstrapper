@@ -14,7 +14,7 @@
 defined( 'ABSPATH' ) || exit;
 
 return array (
-  'version' => '1.0.0',
+  'version' => '2.0.0',
   'mtime' => 1787170871,
   'hooks' => 
   array (

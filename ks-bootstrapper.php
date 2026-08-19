@@ -23,15 +23,35 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin Constants
  */
-define( 'KS_BOOTSTRAPPER_VERSION', '1.0.0' );
+define( 'KS_BOOTSTRAPPER_VERSION', '2.0.0' );
 define( 'KS_BOOTSTRAPPER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KS_BOOTSTRAPPER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'KS_BOOTSTRAPPER_OPTION_PREFIX', '_ks_bootstrapper_' );
 
 /**
- * Load security hardening early so activation/deactivation hooks can use it.
+ * Composer Autoloader
+ *
+ * Loaded while the plugin file is being included, not on 'plugins_loaded'. Activation runs
+ * in a request where that action has already fired: WordPress includes the plugin file and
+ * calls the activation hook immediately afterwards, so an autoloader deferred to
+ * 'plugins_loaded' would never exist by the time Security::activate() needs Options.
  */
-require_once __DIR__ . '/App/Security.php';
+$ks_bootstrapper_autoload = __DIR__ . '/vendor/autoload.php';
+
+// Graceful fallback if Composer hasn't been run.
+if ( ! is_readable( $ks_bootstrapper_autoload ) ) {
+    add_action( 'admin_notices', static function (): void {
+        printf(
+            '<div class="error"><p>%s</p></div>',
+            esc_html__( 'KS Bootstrapper: Please run "composer install" in the plugin directory to activate it.', 'ks-bootstrapper' )
+        );
+    } );
+
+    return;
+}
+
+require_once $ks_bootstrapper_autoload;
+unset( $ks_bootstrapper_autoload );
 
 /**
  * Immediate Constants Bootstrap
@@ -49,30 +69,15 @@ $options = get_option( 'ks_bootstrapper_options', [] );
  *
  * @throws \ReflectionException
  */
-add_action( 'plugins_loaded', function (): void {
-    $composerAutoload = __DIR__ . '/vendor/autoload.php';
+add_action( 'plugins_loaded', static function (): void {
+    $manager = new \KonstantinSorokin\Bootstrapper\Core\Manager(
+        appDir: __DIR__ . '/App',
+        namespacePrefix: 'KonstantinSorokin\\Bootstrapper\\',
+        cacheFile: __DIR__ . '/cache/hooks_cache.php', // Recreated automatically when the sources change
+        version: KS_BOOTSTRAPPER_VERSION
+    );
 
-    // Graceful fallback if Composer hasn't been run
-    if ( file_exists( $composerAutoload ) ) {
-        require_once $composerAutoload;
-
-        $manager = new \KonstantinSorokin\Bootstrapper\Core\Manager(
-            appDir: __DIR__ . '/App',
-            namespacePrefix: 'KonstantinSorokin\\Bootstrapper\\',
-            cacheFile: __DIR__ . '/cache/hooks_cache.php', // Recreated automatically when the sources change
-            version: KS_BOOTSTRAPPER_VERSION
-        );
-
-        $manager->boot();
-    } else {
-        // Display an admin notice if autoload.php is missing
-        add_action( 'admin_notices', function (): void {
-            printf(
-                '<div class="error"><p>%s</p></div>',
-                esc_html__( 'KS Bootstrapper: Please run "composer install" in the plugin directory to activate it.', 'ks-bootstrapper' )
-            );
-        } );
-    }
+    $manager->boot();
 }, 1 ); // Priority 1 ensures the bootstrapper runs before most other plugins
 
 /**
