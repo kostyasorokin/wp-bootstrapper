@@ -110,9 +110,13 @@ final class Options {
     /**
      * Publishes the defaults declared by a settings page to the runtime.
      *
-     * Called by Settings::boot(). Declarations are merged over the stored map rather than
-     * replacing it, so fields living behind a conditional tab keep their defaults while the
-     * plugin they belong to is inactive.
+     * Called by Settings::boot(). The declaration always becomes the map this request reads
+     * from, but it is only mirrored into the database from a wp-admin screen: an anonymous
+     * front-end request must never turn a settings read into a wp_options write.
+     *
+     * The mirror is rebuilt rather than accumulated, so a field deleted from Config.php leaves
+     * no key behind. Only declared defaults live there — the values the owner actually saved
+     * are in the settings row and are never touched here.
      *
      * @param string $optionName The option row the settings page writes to.
      * @param array  $defaults   Map of field id to declared default value.
@@ -124,23 +128,52 @@ final class Options {
             return;
         }
 
-        $stored = self::defaults();
-        $merged = array_merge( $stored, $defaults );
+        // What Config declares wins for the rest of this request, whether or not it can be
+        // persisted, so a module hooked after 'init' never reads a stale mirror.
+        self::$defaults = $defaults;
 
-        if ( $merged !== $stored ) {
-            update_option( self::DEFAULTS_OPTION, $merged );
+        if ( ! self::can_write() ) {
+            return;
         }
 
-        self::$defaults = $merged;
+        $stored = get_option( self::DEFAULTS_OPTION, [] );
+
+        if ( ! is_array( $stored ) || $stored !== $defaults ) {
+            update_option( self::DEFAULTS_OPTION, $defaults );
+        }
 
         self::seed( $defaults );
+    }
+
+    /**
+     * Whether this request is allowed to write the plugin's own bookkeeping rows.
+     *
+     * Only a wp-admin screen request qualifies. A front-end view, admin-ajax, admin-post, the
+     * REST API and WP-Cron all read the mirror and leave it alone, so a cache miss on an
+     * anonymous request can never become a database write. Activation is covered because the
+     * activation hook drops the version stamp and the first admin screen afterwards seeds.
+     *
+     * @return bool
+     */
+    private static function can_write(): bool {
+        if ( ! is_admin() || wp_doing_ajax() || wp_doing_cron() ) {
+            return false;
+        }
+
+        if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+            return false;
+        }
+
+        // admin-post.php also reports is_admin() and accepts unauthenticated requests.
+        return is_user_logged_in();
     }
 
     /**
      * Writes the declared defaults into the settings row once per plugin version.
      *
      * Values already stored always win — seeding only fills in keys that have never been saved,
-     * so an upgrade can add a field without touching anything the owner has configured.
+     * so an upgrade can add a field without touching anything the owner has configured. Reached
+     * only from a wp-admin screen, through the can_write() gate in register_defaults().
      *
      * @param array $defaults Map of field id to declared default value.
      *

@@ -124,6 +124,11 @@ class Files {
      * would then store every such upload as "unnamed-file.ext" and each one
      * after the first would collide with it.
      *
+     * The test is made on the original name rather than on what is left of it:
+     * a double extension leaves the inner one behind as a base ("файл.tar.gz"
+     * becomes "tar.gz"), which looks like a usable name while being the same
+     * for every upload that carries it.
+     *
      * @param string $sanitized_filename The stripped filename.
      * @param string $filename           The original filename.
      *
@@ -133,12 +138,35 @@ class Files {
         $extension = strtolower( (string) pathinfo( $sanitized_filename, PATHINFO_EXTENSION ) );
         $base      = trim( (string) pathinfo( $sanitized_filename, PATHINFO_FILENAME ), '-' );
 
-        if ( '' === $base ) {
+        if ( '' === $base || $this->base_name_was_stripped( $filename ) ) {
             $extension = strtolower( (string) pathinfo( $filename, PATHINFO_EXTENSION ) );
-            $base      = $this->transliterate_base_name( (string) pathinfo( $filename, PATHINFO_FILENAME ) );
+            $base      = $this->transliterate_base_name( (string) pathinfo( $filename, PATHINFO_FILENAME ), $filename );
         }
 
         return '' !== $extension ? $base . '.' . $extension : $base;
+    }
+
+    /**
+     * Reports whether the ASCII stripping lost part of the readable base name.
+     *
+     * Only letters and digits count. Punctuation the sanitizer drops on purpose
+     * — the stray per cent signs, the inner dots of a double extension — leaves
+     * the name just as identifiable as it was, so it must not trigger a rebuild
+     * and change file names that have always been sanitized this way.
+     *
+     * @param string $filename The original filename.
+     *
+     * @return bool True when a letter or a digit was thrown away.
+     */
+    private function base_name_was_stripped( string $filename ): bool {
+        $folded = remove_accents( (string) pathinfo( $filename, PATHINFO_FILENAME ) );
+
+        $kept = (string) preg_replace( '/[^A-Za-z0-9]/', '', $folded );
+        $all  = preg_replace( '/[^\p{L}\p{N}]/u', '', $folded );
+
+        // A name that is not valid UTF-8 cannot be compared: rebuild it rather
+        // than hand out a name that may already belong to another upload.
+        return ! is_string( $all ) || $kept !== $all;
     }
 
     /**
@@ -147,14 +175,17 @@ class Files {
      * sanitize_title() picks up whichever transliteration a site has installed
      * (Cyr-To-Lat and friends). With none installed it percent-encodes the
      * UTF-8 bytes, which reads no better than an empty name, so a short digest
-     * of the original name is used instead. The digest keeps this function
+     * of the original file name is used instead. The digest is taken from the
+     * whole name, extension included, so that two files whose readable part was
+     * destroyed still land on different names — and it keeps this function
      * repeatable: WordPress sanitizes a file name more than once per upload.
      *
-     * @param string $base The original base name.
+     * @param string $base     The original base name.
+     * @param string $filename The original filename, used to seed the digest.
      *
      * @return string An ASCII base name, never empty.
      */
-    private function transliterate_base_name( string $base ): string {
+    private function transliterate_base_name( string $base, string $filename ): string {
         $transliterated = sanitize_title( $base );
 
         // Percent escapes mean nothing was transliterated, only encoded.
@@ -164,7 +195,7 @@ class Files {
 
         $transliterated = trim( (string) preg_replace( '/[^a-z0-9-]/', '', strtolower( $transliterated ) ), '-' );
 
-        return '' !== $transliterated ? $transliterated : 'file-' . substr( md5( $base ), 0, 8 );
+        return '' !== $transliterated ? $transliterated : 'file-' . substr( md5( $filename ), 0, 8 );
     }
 
     /**
@@ -220,7 +251,7 @@ class Files {
             return $file;
         }
 
-        $content = @file_get_contents( (string) $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+        $content = @file_get_contents( (string) ( $file['tmp_name'] ?? '' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
         if ( false === $content || '' === $content ) {
             $file['error'] = esc_html__( 'Unable to read uploaded SVG file.', 'ks-bootstrapper' );
 
@@ -325,10 +356,17 @@ class Files {
             return null;
         }
 
-        // A doctype is fine, an internal subset is not: it can define entities.
-        if ( $document->doctype
-            && ( 'svg' !== strtolower( (string) $document->doctype->name ) || null !== $document->doctype->internalSubset ) ) {
-            return null;
+        // A doctype naming anything but svg, or carrying an internal subset that
+        // can define entities, is refused outright.
+        if ( $document->doctype ) {
+            if ( 'svg' !== strtolower( (string) $document->doctype->name ) || null !== $document->doctype->internalSubset ) {
+                return null;
+            }
+
+            // Even the plain W3C doctype is dropped: its system identifier is a
+            // fetch instruction for whatever parses the stored file later, and
+            // nothing about rendering an SVG needs it.
+            $document->removeChild( $document->doctype );
         }
 
         $root = $document->documentElement;
@@ -374,7 +412,7 @@ class Files {
         }
 
         // Stylesheets may style this document, not fetch another one.
-        return 'style' !== $name || $this->is_allowed_value( $element->textContent );
+        return 'style' !== $name || $this->is_allowed_value( $element->textContent, true );
     }
 
     /**
@@ -405,7 +443,7 @@ class Files {
             return $this->is_allowed_reference( $attribute->value );
         }
 
-        return $this->is_allowed_value( $attribute->value );
+        return $this->is_allowed_value( $attribute->value, 'style' === $name );
     }
 
     /**
@@ -442,14 +480,26 @@ class Files {
     /**
      * Checks a style declaration or a plain attribute value.
      *
-     * @param string $value The value to check.
+     * @param string $value  The value to check.
+     * @param bool   $is_css Optional. True when the value is read as CSS — the style
+     *                       attribute or the body of a <style> element. Default false.
      *
      * @return bool True when the value neither scripts nor fetches anything.
      */
-    private function is_allowed_value( string $value ): bool {
+    private function is_allowed_value( string $value, bool $is_css = false ): bool {
         $normalized = $this->normalize_value( $value );
 
-        foreach ( [ 'javascript:', '@import', 'expression(' ] as $needle ) {
+        $needles = [ 'javascript:', '@import', 'expression(' ];
+
+        if ( $is_css ) {
+            // Both attach a script to an element through a same-document reference,
+            // which the url(#id) rule below deliberately lets past. Only CSS values
+            // are tested for them: "behavior:" can legitimately appear in a label.
+            $needles[] = 'behavior:';
+            $needles[] = '-moz-binding';
+        }
+
+        foreach ( $needles as $needle ) {
             if ( str_contains( $normalized, $needle ) ) {
                 return false;
             }
@@ -460,16 +510,67 @@ class Files {
     }
 
     /**
-     * Flattens a value so that encoded and padded payloads compare equal.
+     * Flattens a value so that encoded, escaped and padded payloads compare equal.
      *
      * @param string $value The raw value.
      *
      * @return string The decoded, whitespace-free, lowercase value.
      */
     private function normalize_value( string $value ): string {
-        $decoded = html_entity_decode( $value, ENT_QUOTES | ENT_HTML5 );
+        $decoded = $this->decode_css_escapes( html_entity_decode( $value, ENT_QUOTES | ENT_HTML5 ) );
 
-        return strtolower( (string) preg_replace( '/[\x00-\x20]+/', '', $decoded ) );
+        // Spaces, zero-width characters and the byte order mark are all padding a
+        // browser skips over, so "\u{200B}javascript:" has to compare as "javascript:".
+        $stripped = preg_replace(
+            '/[\x00-\x20\x{0085}\x{00A0}\x{00AD}\x{1680}\x{180E}\x{2000}-\x{200F}\x{2028}\x{2029}\x{202F}\x{205F}\x{2060}\x{3000}\x{FEFF}]+/u',
+            '',
+            $decoded
+        );
+
+        // A byte sequence that is not valid UTF-8 never parses as XML, but a failed
+        // match must narrow the value rather than widen what gets through.
+        if ( ! is_string( $stripped ) ) {
+            $stripped = (string) preg_replace( '/[\x00-\x20]+/', '', $decoded );
+        }
+
+        return strtolower( $stripped );
+    }
+
+    /**
+     * Resolves the backslash escapes CSS allows inside identifiers and URLs.
+     *
+     * "\75 rl(" and "\6a avascript:" are the same declarations as "url(" and
+     * "javascript:" to a browser, so they have to read the same way here.
+     * Only the comparison copy is rewritten; the stored markup keeps its bytes.
+     *
+     * @param string $value The decoded value.
+     *
+     * @return string The value with its CSS escapes resolved.
+     */
+    private function decode_css_escapes( string $value ): string {
+        if ( ! str_contains( $value, '\\' ) ) {
+            return $value;
+        }
+
+        $resolved = preg_replace_callback(
+            '/\\\\([0-9a-fA-F]{1,6})[ \t\r\n\f]?/',
+            static function ( array $matches ): string {
+                $codepoint = (int) hexdec( $matches[1] );
+
+                // Anything above ASCII cannot spell a scheme or a CSS keyword.
+                return $codepoint > 0 && $codepoint < 0x80 ? chr( $codepoint ) : '';
+            },
+            $value
+        );
+
+        if ( ! is_string( $resolved ) ) {
+            $resolved = $value;
+        }
+
+        // A backslash before anything else is CSS for "take this character literally".
+        $unescaped = preg_replace( '/\\\\(.)/s', '$1', $resolved );
+
+        return is_string( $unescaped ) ? $unescaped : $resolved;
     }
 
     /**

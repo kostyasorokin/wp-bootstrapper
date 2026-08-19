@@ -31,6 +31,13 @@ class Settings {
     public private(set) array $tabs = [];
 
     /**
+     * Option keys whose settings field has been removed from the page, kept as a set.
+     *
+     * @var array<string, true>
+     */
+    private array $retired = [];
+
+    /**
      * Initializes the settings builder.
      */
     public function __construct(
@@ -59,6 +66,34 @@ class Settings {
         $tab = new Tab( $id, $name );
         $buildSections( $tab );
         $this->tabs[] = $tab;
+
+        return $this;
+    }
+
+    /**
+     * Declares option keys that no longer have a settings field.
+     *
+     * A settings row outlives the fields that filled it: deleting a field from the declaration
+     * leaves its saved value behind forever, because saving one tab may not blank the keys the
+     * other tabs own. Naming the key here drops it from the row the next time the page is saved.
+     *
+     * Removal is deliberately explicit. A field that is merely hidden — the Contact Form 7 and
+     * TranslatePress sections disappear while those plugins are inactive — is not declared on
+     * this request either, yet its stored value must survive, so nothing is ever dropped just
+     * for being undeclared. A key that is a live field again is also kept, whatever this list says.
+     *
+     * @param string ...$keys Option keys to drop from the stored row.
+     *
+     * @return self Returns the builder for method chaining.
+     */
+    public function retire( string ...$keys ): self {
+        foreach ( $keys as $key ) {
+            $key = sanitize_key( $key );
+
+            if ( '' !== $key ) {
+                $this->retired[ $key ] = true;
+            }
+        }
 
         return $this;
     }
@@ -225,6 +260,12 @@ class Settings {
      * keys alone when another piece of code calls update_option(). Without this, saving one tab
      * would blank every field the form did not render, since an unchecked checkbox and an
      * unrendered field are equally absent from the submitted data.
+     *
+     * The keys named by retire() are the one exception — they are the only ones ever removed.
+     *
+     * @param mixed $input The submitted values.
+     *
+     * @return array The full settings row to store.
      */
     public function sanitize_settings( mixed $input ): array {
         $input = is_array( $input ) ? $input : [];
@@ -233,7 +274,7 @@ class Settings {
         $sanitized = is_array( $stored ) ? $stored : [];
 
         // Set by the settings form; null for programmatic writes.
-        $scope = isset( $input['__tab'] ) ? sanitize_key( (string) $input['__tab'] ) : null;
+        $scope = isset( $input['__tab'] ) && is_scalar( $input['__tab'] ) ? sanitize_key( (string) $input['__tab'] ) : null;
 
         foreach ( $this->tabs as $tab ) {
             if ( null !== $scope && $tab->id !== $scope ) {
@@ -251,10 +292,23 @@ class Settings {
 
                     $sanitized[ $field->id ] = match ( $field->type ) {
                         FieldType::CHECKBOX => ! empty( $raw ),
-                        FieldType::NUMBER => is_numeric( $raw ) ? max( 1, (int) $raw ) : 0,
+                        // 0 is the same statement as an empty field: leave WordPress alone.
+                        // Clamping to 1 instead turned "no opinion" into the smallest opinion
+                        // there is, which for a quality setting meant quality 1.
+                        FieldType::NUMBER => is_numeric( $raw ) ? max( 0, (int) $raw ) : 0,
                         FieldType::URL => esc_url_raw( (string) ( $raw ?? '' ) ),
                         default => sanitize_text_field( (string) ( $raw ?? '' ) ),
                     };
+                }
+            }
+        }
+
+        if ( ! empty( $this->retired ) ) {
+            $declared = $this->defaults();
+
+            foreach ( array_keys( $this->retired ) as $key ) {
+                if ( ! array_key_exists( $key, $declared ) ) {
+                    unset( $sanitized[ $key ] );
                 }
             }
         }
@@ -269,7 +323,9 @@ class Settings {
      */
     private function current_tab_index(): int {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only navigation state.
-        $requested = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+        $raw = isset( $_GET['tab'] ) && is_scalar( $_GET['tab'] ) ? (string) wp_unslash( $_GET['tab'] ) : '';
+
+        $requested = sanitize_key( $raw );
 
         if ( '' !== $requested ) {
             foreach ( $this->tabs as $index => $tab ) {

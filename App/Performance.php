@@ -135,6 +135,7 @@ class Performance {
      * REST API discovery Link: headers.
      * * Core sends them from 'template_redirect', independently of the matching
      * &lt;head&gt; link, so removing the tag alone leaves the headers in place.
+     * The tag itself is governed by 'disable_rest_link_tag' in Head::clean_head().
      *
      * @return void
      */

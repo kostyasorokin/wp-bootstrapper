@@ -154,6 +154,15 @@ final class Manager {
             return;
         }
 
+        // tempnam() raises "file created in the system's temporary directory" itself when the
+        // target cannot be written, so writability is tested before it is ever called. Without
+        // this the log gains one notice per request for as long as the cache stays unwritable.
+        if ( ! wp_is_writable( $directory ) ) {
+            $this->queue_cache_notice();
+
+            return;
+        }
+
         $payload = [
             'version' => $this->version,
             'mtime'   => $mtime,
@@ -176,7 +185,10 @@ final class Manager {
         $content .= "defined( 'ABSPATH' ) || exit;" . PHP_EOL . PHP_EOL;
         $content .= "return {$export};";
 
-        $temporary = tempnam( $directory, 'ks_hooks_' );
+        // Silenced because the return value is validated on the very next line: should the
+        // directory lose its permissions between the check above and this call, the fallback is
+        // handled through the admin notice rather than through a notice in the log.
+        $temporary = @tempnam( $directory, 'ks_hooks_' ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged
 
         // An unwritable target makes tempnam() fall back to the system directory,
         // where the rename below would no longer be atomic.

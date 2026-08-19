@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 return array (
   'version' => '1.0.0',
-  'mtime' => 1787167027,
+  'mtime' => 1787170871,
   'hooks' => 
   array (
     'KonstantinSorokin\\Bootstrapper\\Settings\\Config' => 
@@ -204,8 +204,8 @@ return array (
     array (
       0 => 
       array (
-        'hook' => 'get_the_archive_title_prefix',
-        'method' => 'clean_archive_title_prefix',
+        'hook' => 'get_the_archive_title',
+        'method' => 'clean_archive_title',
         'priority' => 10,
         'args' => 1,
       ),
@@ -307,47 +307,40 @@ return array (
       ),
       4 => 
       array (
-        'hook' => 'wp_resource_hints',
-        'method' => 'disable_emojis_remove_dns_prefetch',
-        'priority' => 10,
-        'args' => 2,
-      ),
-      5 => 
-      array (
         'hook' => 'widgets_init',
         'method' => 'remove_recent_comments_style',
         'priority' => 10,
         'args' => 1,
       ),
-      6 => 
+      5 => 
       array (
         'hook' => 'wp_head',
         'method' => 'phone_detection',
         'priority' => 5,
         'args' => 1,
       ),
-      7 => 
+      6 => 
       array (
         'hook' => 'wp_head',
         'method' => 'geo_region',
         'priority' => 5,
         'args' => 1,
       ),
-      8 => 
+      7 => 
       array (
         'hook' => 'wp_headers',
         'method' => 'security_headers',
         'priority' => 5,
         'args' => 1,
       ),
-      9 => 
+      8 => 
       array (
         'hook' => 'wp_head',
         'method' => 'content_security_policy',
         'priority' => 1,
         'args' => 1,
       ),
-      10 => 
+      9 => 
       array (
         'hook' => 'run_wptexturize',
         'method' => 'run_wptexturize',
@@ -589,26 +582,54 @@ return array (
       ),
       18 => 
       array (
+        'hook' => 'send_headers',
+        'method' => 'security_headers',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      19 => 
+      array (
+        'hook' => 'send_headers',
+        'method' => 'hsts_header',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      20 => 
+      array (
+        'hook' => 'login_init',
+        'method' => 'hsts_header',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      21 => 
+      array (
+        'hook' => 'admin_init',
+        'method' => 'hsts_header',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      22 => 
+      array (
         'hook' => 'wp_generate_attachment_metadata',
         'method' => 'strip_upload_metadata',
         'priority' => 99,
         'args' => 3,
       ),
-      19 => 
+      23 => 
       array (
         'hook' => 'admin_notices',
         'method' => 'uploads_purge_notice',
         'priority' => 10,
         'args' => 1,
       ),
-      20 => 
+      24 => 
       array (
         'hook' => 'admin_init',
         'method' => 'dismiss_uploads_purge_notice',
         'priority' => 10,
         'args' => 1,
       ),
-      21 => 
+      25 => 
       array (
         'hook' => 'ks_bootstrapper_security_daily',
         'method' => 'daily_maintenance',

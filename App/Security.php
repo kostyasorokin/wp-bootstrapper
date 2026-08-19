@@ -706,29 +706,40 @@ class Security {
             return false;
         }
 
+        $uploads = wp_upload_dir();
+        $base_dir = trailingslashit( (string) ( $uploads['basedir'] ?? '' ) );
+
+        if ( ! empty( $uploads['error'] ) || '' === $base_dir || ! is_dir( $base_dir ) ) {
+            return false;
+        }
+
+        $htaccess_file   = $base_dir . '.htaccess';
+        $web_config_file = $base_dir . 'web.config';
+
+        /*
+         * Repair runs before the server-type gate on purpose. A guard file this plugin
+         * already wrote can have been left mode 0600 by tempnam(), and an .htaccess that
+         * Apache cannot read makes the whole uploads tree answer 500. The host serving the
+         * site today is not necessarily the host serving it tomorrow, so the repair has to
+         * be reachable even where a guard file would never be created in the first place.
+         */
+        self::repair_managed_uploads_file( $htaccess_file, '# BEGIN ' . self::HTACCESS_MARKER );
+        self::repair_managed_uploads_file( $web_config_file, self::WEB_CONFIG_RULE );
+
         // Apache and IIS read these files; nginx, Caddy and FrankenPHP never do.
         if ( ! self::server_reads_uploads_config() ) {
             return false;
         }
 
-        $uploads = wp_upload_dir();
-        $base_dir = trailingslashit( (string) ( $uploads['basedir'] ?? '' ) );
-
-        if (
-            ! empty( $uploads['error'] ) ||
-            '' === $base_dir ||
-            ! is_dir( $base_dir ) ||
-            ! wp_is_writable( $base_dir )
-        ) {
+        if ( ! wp_is_writable( $base_dir ) ) {
             return false;
         }
 
         $protected = false;
 
-        $htaccess_file = $base_dir . '.htaccess';
-        $marker_start  = '# BEGIN ' . self::HTACCESS_MARKER;
-        $marker_end    = '# END ' . self::HTACCESS_MARKER;
-        $block         = implode(
+        $marker_start = '# BEGIN ' . self::HTACCESS_MARKER;
+        $marker_end   = '# END ' . self::HTACCESS_MARKER;
+        $block        = implode(
             PHP_EOL,
             [
                 $marker_start,
@@ -770,7 +781,6 @@ class Security {
             $protected = true;
         }
 
-        $web_config_file = $base_dir . 'web.config';
         if ( self::protect_uploads_web_config( $web_config_file ) ) {
             $protected = true;
         }
@@ -920,6 +930,29 @@ class Security {
     }
 
     /**
+     * Restores read access to a guard file this plugin itself wrote into uploads.
+     *
+     * Only a file carrying our own signature is touched, so an .htaccess or web.config
+     * written by the host or by hand is left exactly as it is.
+     *
+     * @param string $path      Absolute path of the managed file.
+     * @param string $signature Text that identifies the file as one this plugin manages.
+     */
+    private static function repair_managed_uploads_file( string $path, string $signature ): void {
+        if ( ! is_file( $path ) || ! is_readable( $path ) ) {
+            return;
+        }
+
+        $contents = @file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+        if ( ! is_string( $contents ) || ! str_contains( $contents, $signature ) ) {
+            return;
+        }
+
+        self::ensure_file_is_readable( $path );
+    }
+
+    /**
      * Grants the web server user read access to a managed file, the way core does.
      */
     private static function ensure_file_is_readable( string $path ): void {
@@ -929,8 +962,15 @@ class Security {
 
         $permissions = fileperms( $path );
 
-        if ( $permissions && 0644 !== ( $permissions & 0644 ) ) {
-            chmod( $path, $permissions | 0644 );
+        if ( false === $permissions ) {
+            return;
+        }
+
+        // fileperms() also reports the file type, which chmod() must never be handed.
+        $mode = $permissions & 07777;
+
+        if ( 0644 !== ( $mode & 0644 ) ) {
+            chmod( $path, $mode | 0644 );
         }
     }
 

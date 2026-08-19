@@ -37,6 +37,11 @@ class Head {
             remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
             remove_action( 'template_redirect', 'wp_shortlink_header', 11 );
         }
+
+        // Removes the REST API discovery link, and with it the JSON alternate link
+        // printed on singular views. The matching Link: headers come from a separate
+        // core callback and are governed by their own setting.
+        Options::is( 'disable_rest_link_tag' ) && remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
     }
 
     /**
@@ -76,6 +81,16 @@ class Head {
         remove_action( 'admin_print_scripts', 'print_emoji_detection_script' );
         remove_action( 'wp_print_styles', 'print_emoji_styles' );
         remove_action( 'admin_print_styles', 'print_emoji_styles' );
+
+        // The /embed/ iframe is a second, independent surface: core prints the
+        // detection script from 'embed_head' and flushes the deferred payload through
+        // 'embed_footer', so the wp_head removal above never reaches it. The two
+        // wp_enqueue_emoji_styles copies already abstain once print_emoji_styles is
+        // unhooked, and are dropped here so the suppression does not rely on that.
+        remove_action( 'embed_head', 'print_emoji_detection_script' );
+        remove_action( 'enqueue_embed_scripts', 'wp_enqueue_emoji_styles' );
+        remove_action( 'wp_enqueue_scripts', 'wp_enqueue_emoji_styles' );
+
         remove_filter( 'the_content_feed', 'wp_staticize_emoji' );
         remove_filter( 'comment_text_rss', 'wp_staticize_emoji' );
         remove_filter( 'wp_mail', 'wp_staticize_emoji_for_email' );
@@ -95,29 +110,6 @@ class Head {
         }
 
         return array_values( array_diff( $plugins, [ 'wpemoji' ] ) );
-    }
-
-    /**
-     * Removes the emoji CDN host from DNS prefetch hints.
-     *
-     * @param array  $urls          Resource hint URLs.
-     * @param string $relation_type Resource hint relation type.
-     *
-     * @return array
-     */
-    #[Hook( 'wp_resource_hints', accepted_args: 2 )]
-    public function disable_emojis_remove_dns_prefetch( array $urls, string $relation_type ): array {
-        if ( ! Options::is( 'disable_emojis', true ) || 'dns-prefetch' !== $relation_type ) {
-            return $urls;
-        }
-
-        foreach ( $urls as $key => $url ) {
-            if ( is_string( $url ) && false !== strpos( $url, 's.w.org' ) ) {
-                unset( $urls[ $key ] );
-            }
-        }
-
-        return $urls;
     }
 
     /**
