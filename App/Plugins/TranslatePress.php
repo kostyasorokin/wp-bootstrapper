@@ -26,13 +26,20 @@ class TranslatePress {
 
     /**
      * Dequeue default TranslatePress language switcher styles.
+     *
+     * Covers every stylesheet TranslatePress 3.x can register: the shortcode and
+     * floater sheets of the legacy switcher, and the sheet of the V2 switcher
+     * that ships as the default since 3.3.
      */
     #[Hook( 'wp_enqueue_scripts', priority: 9000 )]
     public function dequeue_style(): void {
         if ( ! $this->is_active() || ! Options::is( 'trp_disable_default_css' ) ) {
             return;
         }
+
         wp_dequeue_style( 'trp-language-switcher-style' );
+        wp_dequeue_style( 'trp-floater-language-switcher-style' );
+        wp_dequeue_style( 'trp-language-switcher-v2' );
     }
 
     /**

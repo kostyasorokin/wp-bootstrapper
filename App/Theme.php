@@ -18,27 +18,19 @@ defined( 'ABSPATH' ) || exit;
 class Theme {
 
     /**
-     * Removes the prefix (Category:, Tag:, etc.) from archive titles.
+     * Removes the prefix (Category:, Tag:, Author:, Year:, etc.) from archive titles.
      *
-     * @param string $title The original archive title.
+     * Filtering the prefix covers every archive type WordPress prefixes, date
+     * archives included, and leaves the markup core builds around the title
+     * untouched.
      *
-     * @return string The cleaned archive title.
+     * @param string $prefix The original archive title prefix.
+     *
+     * @return string An empty prefix, or the original one when the tweak is disabled.
      */
-    #[Hook( 'get_the_archive_title' )]
-    public function clean_archive_title( string $title ): string {
-        if ( is_category() ) {
-            $title = single_cat_title( '', false );
-        } elseif ( is_tag() ) {
-            $title = single_tag_title( '', false );
-        } elseif ( is_author() ) {
-            $title = '<span class="vcard">' . get_the_author() . '</span>';
-        } elseif ( is_post_type_archive() ) {
-            $title = post_type_archive_title( '', false );
-        } elseif ( is_tax() ) {
-            $title = single_term_title( '', false );
-        }
-
-        return $title;
+    #[Hook( 'get_the_archive_title_prefix' )]
+    public function clean_archive_title_prefix( string $prefix ): string {
+        return Options::is( 'clean_archive_titles', true ) ? '' : $prefix;
     }
 
 }

@@ -15,6 +15,9 @@ use DOMElement;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplFileInfo;
+use Throwable;
+use WP_Error;
+use WP_REST_Request;
 use KonstantinSorokin\Bootstrapper\Attributes\Hook;
 use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
@@ -43,6 +46,16 @@ class Security {
     private const string SELF_HEAL_TRANSIENT = 'ks_bootstrapper_security_self_heal_due';
 
     /**
+     * Transient key holding the report of the last uploads purge.
+     */
+    private const string PURGE_REPORT_TRANSIENT = 'ks_bootstrapper_uploads_purge_report';
+
+    /**
+     * Query argument used to dismiss the uploads purge notice.
+     */
+    private const string PURGE_DISMISS_ARG = 'ks_bootstrapper_dismiss_purge_report';
+
+    /**
      * Maximum number of files to inspect in a single cleanup pass.
      */
     private const int MAX_FILES_PER_RUN = 5000;
@@ -51,6 +64,51 @@ class Security {
      * Maximum runtime for a single cleanup pass in seconds.
      */
     private const int MAX_RUNTIME_SECONDS = 10;
+
+    /**
+     * Largest size, in bytes, a file may have and still be treated as a directory guard.
+     */
+    private const int GUARD_FILE_MAX_SIZE = 256;
+
+    /**
+     * Failed login attempts tolerated from one address before the lockout starts.
+     */
+    private const int LOGIN_MAX_ATTEMPTS = 5;
+
+    /**
+     * Lifetime of the failed login counter, which is also the maximum lockout length.
+     */
+    private const int LOGIN_LOCKOUT_SECONDS = 15 * MINUTE_IN_SECONDS;
+
+    /**
+     * Error code returned by the login throttle.
+     */
+    private const string LOGIN_ERROR_CODE = 'ks_bootstrapper_login_throttled';
+
+    /**
+     * Prefix for the per-address failed login transients.
+     */
+    private const string LOGIN_TRANSIENT_PREFIX = 'ks_bootstrapper_login_fail_';
+
+    /**
+     * Path fragment identifying the wordpress.org browser check endpoint.
+     */
+    private const string BROWSE_HAPPY_PATH = '/core/browse-happy/';
+
+    /**
+     * Referrer policy sent with front-end responses.
+     */
+    private const string REFERRER_POLICY = 'strict-origin-when-cross-origin';
+
+    /**
+     * Browser features denied to this document and everything it embeds.
+     */
+    private const string PERMISSIONS_POLICY = 'geolocation=(), camera=(), microphone=(), payment=(), usb=(), browsing-topics=()';
+
+    /**
+     * Lifetime advertised by the Strict-Transport-Security header, in seconds.
+     */
+    private const int HSTS_MAX_AGE = 180 * DAY_IN_SECONDS;
 
     /**
      * File extensions that should never live in uploads.
@@ -66,6 +124,21 @@ class Security {
         'php8',
         'phtml',
         'phar',
+    ];
+
+    /**
+     * Metadata fields cleared from the attachment record when camera data is stripped.
+     *
+     * @var string[]
+     */
+    private const array STRIPPED_META_FIELDS = [
+        'credit',
+        'camera',
+        'caption',
+        'copyright',
+        'title',
+        'keywords',
+        'created_timestamp',
     ];
 
     /**
@@ -90,14 +163,24 @@ class Security {
 
         if ( isset( $wp_query ) ) {
             $wp_query->set_404();
+
+            /*
+             * set_404() restores is_feed on purpose and never touches is_embed or the
+             * result set, so the template loader would still serve /author/<slug>/feed/
+             * and /author/<slug>/embed/ with the author's posts behind a 404 status line.
+             */
+            $wp_query->is_feed         = false;
+            $wp_query->is_comment_feed = false;
+            $wp_query->is_embed        = false;
+            $wp_query->posts           = [];
+            $wp_query->post            = null;
+            $wp_query->post_count      = 0;
+            $wp_query->current_post    = -1;
+            $wp_query->max_num_pages   = 0;
         }
 
         status_header( 404 );
         nocache_headers();
-
-        if ( function_exists( 'redirect_guess_404_permalink' ) ) {
-            remove_filter( 'template_redirect', 'redirect_guess_404_permalink' );
-        }
     }
 
     /**
@@ -115,6 +198,399 @@ class Security {
         }
 
         return false;
+    }
+
+    /**
+     * Stops core from guessing a permalink for a blocked author request.
+     *
+     * @param bool $guess Whether the 404 permalink guess may run.
+     *
+     * @return bool
+     */
+    #[Hook( 'do_redirect_guess_404_permalink' )]
+    public function disable_redirect_guess( bool $guess ): bool {
+        return $this->should_block_author_enumeration() ? false : $guess;
+    }
+
+    /**
+     * Rejects guest requests to the REST users routes.
+     *
+     * @param mixed                $result  Pre-dispatch result, null unless already short-circuited.
+     * @param mixed                $server  REST server instance.
+     * @param WP_REST_Request|null $request Request being dispatched.
+     *
+     * @return mixed
+     */
+    #[Hook( 'rest_pre_dispatch', accepted_args: 3 )]
+    public function restrict_rest_users( mixed $result, mixed $server, ?WP_REST_Request $request = null ): mixed {
+        if ( null !== $result || ! $request instanceof WP_REST_Request ) {
+            return $result;
+        }
+
+        if ( ! $this->blocks_user_enumeration() ) {
+            return $result;
+        }
+
+        if ( ! preg_match( '#^/wp/v2/users\b#', untrailingslashit( (string) $request->get_route() ) ) ) {
+            return $result;
+        }
+
+        return new WP_Error(
+            'rest_user_cannot_view',
+            __( 'Sorry, you are not allowed to list users.', 'ks-bootstrapper' ),
+            [ 'status' => rest_authorization_required_code() ]
+        );
+    }
+
+    /**
+     * Removes the core users provider from the WordPress sitemap index.
+     *
+     * @param mixed  $provider Sitemap provider instance.
+     * @param string $name     Provider name.
+     *
+     * @return mixed
+     */
+    #[Hook( 'wp_sitemaps_add_provider', accepted_args: 2 )]
+    public function remove_users_sitemap_provider( mixed $provider, string $name ): mixed {
+        if ( 'users' === $name && Options::is( 'block_author_enumeration' ) ) {
+            return false;
+        }
+
+        return $provider;
+    }
+
+    /**
+     * Empties the author list an SEO plugin would publish in its sitemap.
+     *
+     * @param array $users Users the sitemap would list.
+     *
+     * @return array
+     */
+    #[Hook( 'wpseo_sitemap_exclude_author' )]
+    public function exclude_authors_from_sitemap( array $users ): array {
+        return Options::is( 'block_author_enumeration' ) ? [] : $users;
+    }
+
+    /**
+     * Disables the XML-RPC methods that require authentication.
+     *
+     * @param bool $enabled Whether authenticated XML-RPC is enabled.
+     *
+     * @return bool
+     */
+    #[Hook( 'xmlrpc_enabled' )]
+    public function disable_xmlrpc( bool $enabled ): bool {
+        return Options::is( 'disable_xmlrpc' ) ? false : $enabled;
+    }
+
+    /**
+     * Empties the XML-RPC method table, including the unauthenticated pingback methods.
+     *
+     * @param array $methods Registered XML-RPC methods.
+     *
+     * @return array
+     */
+    #[Hook( 'xmlrpc_methods' )]
+    public function disable_xmlrpc_methods( array $methods ): array {
+        return Options::is( 'disable_xmlrpc' ) ? [] : $methods;
+    }
+
+    /**
+     * Drops the X-Pingback header that advertises the XML-RPC endpoint.
+     *
+     * @param array $headers Response headers.
+     *
+     * @return array
+     */
+    #[Hook( 'wp_headers' )]
+    public function remove_pingback_header( array $headers ): array {
+        if ( Options::is( 'disable_xmlrpc' ) ) {
+            unset( $headers['X-Pingback'] );
+        }
+
+        return $headers;
+    }
+
+    /**
+     * Reports every post as closed for pings.
+     *
+     * @param bool $open    Whether the post accepts pings.
+     * @param int  $post_id Post ID.
+     *
+     * @return bool
+     */
+    #[Hook( 'pings_open', accepted_args: 2 )]
+    public function close_pings( bool $open, int $post_id ): bool {
+        return Options::is( 'disable_xmlrpc' ) ? false : $open;
+    }
+
+    /**
+     * Switches Application Passwords off for the whole site.
+     *
+     * @param bool $available Whether Application Passwords are available.
+     *
+     * @return bool
+     */
+    #[Hook( 'wp_is_application_passwords_available' )]
+    public function disable_application_passwords( bool $available ): bool {
+        return Options::is( 'disable_application_passwords' ) ? false : $available;
+    }
+
+    /**
+     * Replaces login failures that name the account with one neutral message.
+     *
+     * @param WP_Error $errors      Login page errors.
+     * @param string   $redirect_to Redirect destination URL.
+     *
+     * @return WP_Error
+     */
+    #[Hook( 'wp_login_errors', accepted_args: 2 )]
+    public function generic_login_errors( WP_Error $errors, string $redirect_to ): WP_Error {
+        if ( ! Options::is( 'generic_login_errors' ) ) {
+            return $errors;
+        }
+
+        $leaky = array_intersect(
+            [ 'invalid_username', 'invalid_email', 'incorrect_password', 'authentication_failed' ],
+            $errors->get_error_codes()
+        );
+
+        if ( ! $leaky ) {
+            return $errors;
+        }
+
+        foreach ( $leaky as $code ) {
+            $errors->remove( $code );
+        }
+
+        $errors->add(
+            'authentication_failed',
+            __( '<strong>Error:</strong> Invalid username, email address or incorrect password.', 'ks-bootstrapper' )
+        );
+
+        return $errors;
+    }
+
+    /**
+     * Rejects authentication attempts from an address that has failed too often.
+     *
+     * @param mixed  $user     Authentication result so far.
+     * @param string $username Submitted username or email address.
+     * @param string $password Submitted password.
+     *
+     * @return mixed
+     */
+    #[Hook( 'authenticate', priority: 30, accepted_args: 3 )]
+    public function throttle_login( mixed $user, string $username, string $password ): mixed {
+        if ( ! Options::is( 'limit_login_attempts' ) || '' === $username || '' === $password ) {
+            return $user;
+        }
+
+        $key = self::login_throttle_key();
+
+        if ( '' === $key || (int) get_transient( $key ) < self::LOGIN_MAX_ATTEMPTS ) {
+            return $user;
+        }
+
+        return new WP_Error(
+            self::LOGIN_ERROR_CODE,
+            __( '<strong>Error:</strong> Too many failed login attempts. Please try again later.', 'ks-bootstrapper' )
+        );
+    }
+
+    /**
+     * Counts a failed login attempt against the connecting address.
+     *
+     * @param string   $username Submitted username or email address.
+     * @param WP_Error $error    Authentication failure details.
+     */
+    #[Hook( 'wp_login_failed', accepted_args: 2 )]
+    public function count_failed_login( string $username, WP_Error $error ): void {
+        // Our own rejection must not extend the lockout, otherwise it never expires.
+        if ( ! Options::is( 'limit_login_attempts' ) || self::LOGIN_ERROR_CODE === $error->get_error_code() ) {
+            return;
+        }
+
+        $key = self::login_throttle_key();
+
+        if ( '' === $key ) {
+            return;
+        }
+
+        set_transient( $key, (int) get_transient( $key ) + 1, self::LOGIN_LOCKOUT_SECONDS );
+    }
+
+    /**
+     * Clears the failed login counter once an address authenticates successfully.
+     *
+     * @param string $user_login Login name of the authenticated user.
+     * @param mixed  $user       Authenticated user object.
+     */
+    #[Hook( 'wp_login', accepted_args: 2 )]
+    public function clear_login_throttle( string $user_login, mixed $user = null ): void {
+        if ( ! Options::is( 'limit_login_attempts' ) ) {
+            return;
+        }
+
+        $key = self::login_throttle_key();
+
+        if ( '' !== $key ) {
+            delete_transient( $key );
+        }
+    }
+
+    /**
+     * Blocks the dashboard request that posts the browser user agent to wordpress.org.
+     *
+     * @param mixed  $preempt Short-circuit value for the HTTP request.
+     * @param array  $args    Request arguments.
+     * @param string $url     Request URL.
+     *
+     * @return mixed
+     */
+    #[Hook( 'pre_http_request', accepted_args: 3 )]
+    public function block_browse_happy( mixed $preempt, array $args, string $url ): mixed {
+        if ( ! Options::is( 'disable_browse_happy' ) || ! str_contains( $url, self::BROWSE_HAPPY_PATH ) ) {
+            return $preempt;
+        }
+
+        return new WP_Error(
+            'ks_bootstrapper_request_blocked',
+            __( 'Browser version check blocked by site settings.', 'ks-bootstrapper' )
+        );
+    }
+
+    /**
+     * Removes the browser upgrade notice from the dashboard.
+     */
+    #[Hook( 'wp_dashboard_setup', priority: 99 )]
+    public function remove_browser_nag_widget(): void {
+        if ( Options::is( 'disable_browse_happy' ) ) {
+            remove_meta_box( 'dashboard_browser_nag', 'dashboard', 'normal' );
+        }
+    }
+
+    /**
+     * Sends the hardening response headers core leaves off front-end responses.
+     */
+    #[Hook( 'send_headers' )]
+    public function security_headers(): void {
+        if ( ! Options::is( 'security_headers' ) || headers_sent() ) {
+            return;
+        }
+
+        header( 'X-Content-Type-Options: nosniff' );
+        header( 'Referrer-Policy: ' . self::REFERRER_POLICY );
+        header( 'Permissions-Policy: ' . self::PERMISSIONS_POLICY );
+    }
+
+    /**
+     * Tells browsers to reach this site over HTTPS only.
+     *
+     * Registered on the three surfaces core covers for its own headers, so the
+     * login screen and the dashboard are protected alongside the front end.
+     */
+    #[Hook( 'send_headers' )]
+    #[Hook( 'login_init' )]
+    #[Hook( 'admin_init' )]
+    public function hsts_header(): void {
+        if ( ! Options::is( 'hsts' ) || ! is_ssl() || headers_sent() ) {
+            return;
+        }
+
+        header( 'Strict-Transport-Security: max-age=' . self::HSTS_MAX_AGE );
+    }
+
+    /**
+     * Removes camera and authorship metadata from freshly uploaded JPEG files.
+     *
+     * @param array  $metadata      Generated attachment metadata.
+     * @param int    $attachment_id Attachment ID.
+     * @param string $context       Either 'create' or 'update'.
+     *
+     * @return array
+     */
+    #[Hook( 'wp_generate_attachment_metadata', priority: 99, accepted_args: 3 )]
+    public function strip_upload_metadata( array $metadata, int $attachment_id, string $context ): array {
+        if ( ! Options::is( 'strip_upload_metadata' ) || 'create' !== $context ) {
+            return $metadata;
+        }
+
+        if ( 'image/jpeg' !== get_post_mime_type( $attachment_id ) ) {
+            return $metadata;
+        }
+
+        $file = (string) get_attached_file( $attachment_id );
+
+        if ( '' === $file || ! file_exists( $file ) ) {
+            return $metadata;
+        }
+
+        if ( self::strip_jpeg_app_segments( $file ) && isset( $metadata['filesize'] ) ) {
+            $metadata['filesize'] = wp_filesize( $file );
+        }
+
+        // The untouched original kept beside a scaled upload carries the same data.
+        if ( ! empty( $metadata['original_image'] ) && is_string( $metadata['original_image'] ) ) {
+            self::strip_jpeg_app_segments( path_join( dirname( $file ), $metadata['original_image'] ) );
+        }
+
+        if ( isset( $metadata['image_meta'] ) && is_array( $metadata['image_meta'] ) ) {
+            foreach ( self::STRIPPED_META_FIELDS as $field ) {
+                $metadata['image_meta'][ $field ] = is_array( $metadata['image_meta'][ $field ] ?? null ) ? [] : '';
+            }
+        }
+
+        return $metadata;
+    }
+
+    /**
+     * Shows the report of the last uploads purge to site administrators.
+     */
+    #[Hook( 'admin_notices' )]
+    public function uploads_purge_notice(): void {
+        if ( ! current_user_can( 'manage_options' ) ) {
+            return;
+        }
+
+        $report = get_transient( self::PURGE_REPORT_TRANSIENT );
+
+        if ( ! is_array( $report ) || ! $report ) {
+            return;
+        }
+
+        $dismiss_url = wp_nonce_url(
+            add_query_arg( self::PURGE_DISMISS_ARG, 1 ),
+            self::PURGE_DISMISS_ARG
+        );
+
+        echo '<div class="notice notice-warning"><p>';
+        echo esc_html__( 'Bootstrapper removed executable files from the uploads directory:', 'ks-bootstrapper' );
+        echo '</p><ul style="margin-left:2em;list-style:disc;">';
+
+        foreach ( $report as $path ) {
+            echo '<li><code>' . esc_html( (string) $path ) . '</code></li>';
+        }
+
+        echo '</ul><p><a href="' . esc_url( $dismiss_url ) . '">';
+        echo esc_html__( 'Dismiss this report', 'ks-bootstrapper' );
+        echo '</a></p></div>';
+    }
+
+    /**
+     * Clears the uploads purge report when the administrator dismisses it.
+     */
+    #[Hook( 'admin_init' )]
+    public function dismiss_uploads_purge_notice(): void {
+        if ( empty( $_GET[ self::PURGE_DISMISS_ARG ] ) || ! current_user_can( 'manage_options' ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            return;
+        }
+
+        check_admin_referer( self::PURGE_DISMISS_ARG );
+        delete_transient( self::PURGE_REPORT_TRANSIENT );
+
+        wp_safe_redirect( remove_query_arg( [ self::PURGE_DISMISS_ARG, '_wpnonce' ] ) );
+        exit;
     }
 
     /**
@@ -174,6 +650,34 @@ class Security {
     }
 
     /**
+     * Determines whether guests may read user records over the REST API.
+     */
+    private function blocks_user_enumeration(): bool {
+        if ( is_user_logged_in() ) {
+            return false;
+        }
+
+        return Options::is( 'restrict_rest_users' ) || Options::is( 'block_author_enumeration' );
+    }
+
+    /**
+     * Builds the transient key that counts failed logins for the connecting address.
+     */
+    private static function login_throttle_key(): string {
+        // REMOTE_ADDR only: forwarded-for headers are supplied by the client and cannot be trusted.
+        $address = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) $_SERVER['REMOTE_ADDR'] : '';
+
+        /**
+         * Allows a site behind a trusted reverse proxy to supply the real client address.
+         *
+         * @param string $address Address used to group failed login attempts.
+         */
+        $address = (string) apply_filters( 'ks_bootstrapper_login_throttle_ip', $address );
+
+        return '' === $address ? '' : self::LOGIN_TRANSIENT_PREFIX . md5( $address );
+    }
+
+    /**
      * Runs infrequent self-heal checks during regular traffic.
      */
     private static function maybe_self_heal(): void {
@@ -186,9 +690,27 @@ class Security {
     }
 
     /**
+     * Reports whether the running web server reads the config files written into uploads.
+     */
+    private static function server_reads_uploads_config(): bool {
+        global $is_apache, $is_IIS, $is_iis7;
+
+        return (bool) $is_apache || (bool) $is_IIS || (bool) $is_iis7;
+    }
+
+    /**
      * Writes managed server config files into uploads to block PHP execution.
      */
     private static function protect_uploads_directory(): bool {
+        if ( ! Options::is( 'harden_uploads', true ) ) {
+            return false;
+        }
+
+        // Apache and IIS read these files; nginx, Caddy and FrankenPHP never do.
+        if ( ! self::server_reads_uploads_config() ) {
+            return false;
+        }
+
         $uploads = wp_upload_dir();
         $base_dir = trailingslashit( (string) ( $uploads['basedir'] ?? '' ) );
 
@@ -241,7 +763,10 @@ class Security {
             $updated_contents = rtrim( $contents ) . ( '' !== trim( $contents ) ? PHP_EOL . PHP_EOL : '' ) . $block;
         }
 
-        if ( $updated_contents === $contents || self::atomic_write( $htaccess_file, $updated_contents ) ) {
+        if ( $updated_contents === $contents ) {
+            self::ensure_file_is_readable( $htaccess_file );
+            $protected = true;
+        } elseif ( self::atomic_write( $htaccess_file, $updated_contents ) ) {
             $protected = true;
         }
 
@@ -388,7 +913,25 @@ class Security {
             return false;
         }
 
+        // tempnam() creates the staging file as 0600 and rename() keeps that mode.
+        self::ensure_file_is_readable( $path );
+
         return true;
+    }
+
+    /**
+     * Grants the web server user read access to a managed file, the way core does.
+     */
+    private static function ensure_file_is_readable( string $path ): void {
+        if ( ! file_exists( $path ) ) {
+            return;
+        }
+
+        $permissions = fileperms( $path );
+
+        if ( $permissions && 0644 !== ( $permissions & 0644 ) ) {
+            chmod( $path, $permissions | 0644 );
+        }
     }
 
     /**
@@ -404,6 +947,10 @@ class Security {
      * Recursively removes PHP-like files from uploads.
      */
     private static function delete_php_files_from_uploads(): int {
+        if ( ! Options::is( 'purge_php_from_uploads' ) ) {
+            return 0;
+        }
+
         $uploads = wp_upload_dir();
         $base_dir = (string) ( $uploads['basedir'] ?? '' );
 
@@ -411,43 +958,180 @@ class Security {
             return 0;
         }
 
-        $deleted  = 0;
-        $checked  = 0;
-        $started  = microtime( true );
-        $iterator = new RecursiveIteratorIterator(
-            new RecursiveDirectoryIterator( $base_dir, RecursiveDirectoryIterator::SKIP_DOTS )
-        );
+        $removed = [];
+        $checked = 0;
+        $started = microtime( true );
 
-        /** @var SplFileInfo $file */
-        foreach ( $iterator as $file ) {
-            if ( ++$checked > self::MAX_FILES_PER_RUN ) {
-                self::debug_log( 'Uploads cleanup stopped after reaching file scan limit.' );
-                break;
-            }
+        try {
+            /*
+             * CATCH_GET_CHILD keeps one unreadable subdirectory from throwing an
+             * UnexpectedValueException that would abort activation or the cron run.
+             */
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator( $base_dir, RecursiveDirectoryIterator::SKIP_DOTS ),
+                RecursiveIteratorIterator::LEAVES_ONLY,
+                RecursiveIteratorIterator::CATCH_GET_CHILD
+            );
 
-            if ( ( microtime( true ) - $started ) >= self::MAX_RUNTIME_SECONDS ) {
-                self::debug_log( 'Uploads cleanup stopped after reaching runtime limit.' );
-                break;
-            }
+            /** @var SplFileInfo $file */
+            foreach ( $iterator as $file ) {
+                if ( ++$checked > self::MAX_FILES_PER_RUN ) {
+                    self::debug_log( 'Uploads cleanup stopped after reaching file scan limit.' );
+                    break;
+                }
 
-            if ( ! $file->isFile() ) {
-                continue;
-            }
+                if ( ( microtime( true ) - $started ) >= self::MAX_RUNTIME_SECONDS ) {
+                    self::debug_log( 'Uploads cleanup stopped after reaching runtime limit.' );
+                    break;
+                }
 
-            $extension = strtolower( $file->getExtension() );
-            if ( ! in_array( $extension, self::BLOCKED_EXTENSIONS, true ) ) {
-                continue;
-            }
+                if ( ! $file->isFile() ) {
+                    continue;
+                }
 
-            $pathname = $file->getPathname();
+                $extension = strtolower( $file->getExtension() );
+                if ( ! in_array( $extension, self::BLOCKED_EXTENSIONS, true ) ) {
+                    continue;
+                }
 
-            if ( wp_is_writable( $pathname ) && wp_delete_file( $pathname ) ) {
-                ++$deleted;
+                if ( self::is_directory_guard( $file ) ) {
+                    continue;
+                }
+
+                $pathname = $file->getPathname();
+
+                /*
+                 * Unlinking needs write access to the parent directory, not to the file,
+                 * so a read-only dropped shell must not be skipped. wp_delete_file()
+                 * reports the outcome by itself.
+                 */
+                if ( ! wp_delete_file( $pathname ) ) {
+                    self::debug_log( 'Failed to remove blocked file from uploads: ' . $pathname );
+                    continue;
+                }
+
+                $removed[] = $pathname;
                 self::debug_log( 'Removed blocked file from uploads: ' . $pathname );
             }
+        } catch ( Throwable $exception ) {
+            self::debug_log( 'Uploads cleanup stopped: ' . $exception->getMessage() );
         }
 
-        return $deleted;
+        if ( $removed ) {
+            self::record_purge_report( $removed );
+        }
+
+        return count( $removed );
+    }
+
+    /**
+     * Detects the blank "Silence is golden" files plugins drop to suppress directory listing.
+     */
+    private static function is_directory_guard( SplFileInfo $file ): bool {
+        if ( 'index.php' !== $file->getFilename() || $file->getSize() > self::GUARD_FILE_MAX_SIZE ) {
+            return false;
+        }
+
+        $contents = (string) @file_get_contents( $file->getPathname() ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+        return 1 === preg_match( '#^\s*<\?php\s*(?://|/\*|\#)?\s*Silence is golden#i', $contents );
+    }
+
+    /**
+     * Stores the list of purged files so it can be surfaced in the dashboard.
+     *
+     * @param string[] $removed Absolute paths of the deleted files.
+     */
+    private static function record_purge_report( array $removed ): void {
+        $previous = get_transient( self::PURGE_REPORT_TRANSIENT );
+        $report   = is_array( $previous ) ? array_merge( $previous, $removed ) : $removed;
+
+        set_transient( self::PURGE_REPORT_TRANSIENT, array_slice( array_unique( $report ), 0, 50 ), MONTH_IN_SECONDS );
+    }
+
+    /**
+     * Removes the Exif/XMP and IPTC segments from a JPEG file in place.
+     *
+     * Keeps APP0 (JFIF) and APP2 (ICC colour profile) so the image still renders
+     * with the colours it was uploaded with, and never re-encodes the pixels.
+     */
+    private static function strip_jpeg_app_segments( string $path ): bool {
+        if ( ! is_file( $path ) ) {
+            return false;
+        }
+
+        $contents = @file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+
+        if ( ! is_string( $contents ) || "\xFF\xD8" !== substr( $contents, 0, 2 ) ) {
+            return false;
+        }
+
+        $length  = strlen( $contents );
+        $offset  = 2;
+        $output  = "\xFF\xD8";
+        $changed = false;
+
+        while ( $offset < $length ) {
+            if ( "\xFF" !== $contents[ $offset ] || $offset + 1 >= $length ) {
+                return false;
+            }
+
+            $marker = ord( $contents[ $offset + 1 ] );
+
+            // Padding byte before the real marker.
+            if ( 0xFF === $marker ) {
+                $output .= "\xFF";
+                ++$offset;
+                continue;
+            }
+
+            // End of image: copy whatever trails it untouched.
+            if ( 0xD9 === $marker ) {
+                $output .= substr( $contents, $offset );
+                break;
+            }
+
+            // Start of scan: the rest of the file is entropy-coded image data.
+            if ( 0xDA === $marker ) {
+                $output .= substr( $contents, $offset );
+                break;
+            }
+
+            // Standalone markers carry no payload.
+            if ( 0x01 === $marker || ( $marker >= 0xD0 && $marker <= 0xD8 ) ) {
+                $output .= substr( $contents, $offset, 2 );
+                $offset += 2;
+                continue;
+            }
+
+            $header = unpack( 'n', substr( $contents, $offset + 2, 2 ) );
+            $size   = is_array( $header ) ? (int) $header[1] : 0;
+
+            if ( $size < 2 || $offset + 2 + $size > $length ) {
+                return false;
+            }
+
+            // APP1 holds Exif and XMP, APP13 holds the IPTC/Photoshop block.
+            if ( 0xE1 === $marker || 0xED === $marker ) {
+                $changed = true;
+            } else {
+                $output .= substr( $contents, $offset, 2 + $size );
+            }
+
+            $offset += 2 + $size;
+        }
+
+        if ( ! $changed ) {
+            return false;
+        }
+
+        if ( ! self::atomic_write( $path, $output ) ) {
+            self::debug_log( 'Unable to rewrite JPEG without metadata: ' . $path );
+
+            return false;
+        }
+
+        return true;
     }
 
 }

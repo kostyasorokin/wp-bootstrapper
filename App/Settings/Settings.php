@@ -17,6 +17,7 @@ namespace KonstantinSorokin\Bootstrapper\Settings;
 use KonstantinSorokin\Bootstrapper\Settings\Definitions\Tab;
 use KonstantinSorokin\Bootstrapper\Settings\Definitions\Field;
 use KonstantinSorokin\Bootstrapper\Settings\Enums\FieldType;
+use KonstantinSorokin\Bootstrapper\Settings\Helpers\Options;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -77,8 +78,36 @@ class Settings {
      * Hooks the settings builder into the WordPress lifecycle.
      */
     public function boot(): void {
+        Options::register_defaults( $this->optionName, $this->defaults() );
+
         add_action( 'admin_menu', [ $this, 'add_menu_page' ] );
         add_action( 'admin_init', [ $this, 'register_settings' ] );
+    }
+
+    /**
+     * Collects the default value declared for every registered field.
+     *
+     * Values are normalised to the type the field stores, so a checkbox that declares no
+     * default reports false rather than an empty string.
+     *
+     * @return array Map of field id to declared default value.
+     */
+    public function defaults(): array {
+        $defaults = [];
+
+        foreach ( $this->tabs as $tab ) {
+            foreach ( $tab->sections as $section ) {
+                foreach ( $section->fields as $field ) {
+                    $defaults[ $field->id ] = match ( $field->type ) {
+                        FieldType::CHECKBOX => (bool) $field->default,
+                        FieldType::NUMBER => is_numeric( $field->default ) ? (int) $field->default : 0,
+                        default => is_scalar( $field->default ) ? (string) $field->default : '',
+                    };
+                }
+            }
+        }
+
+        return $defaults;
     }
 
     /**
@@ -190,89 +219,130 @@ class Settings {
 
     /**
      * Sanitizes the unified settings array before storage.
+     *
+     * The stored row is the starting point, and only the fields that were actually in scope are
+     * rewritten: the submitted tab when the value comes from the settings form, and the supplied
+     * keys alone when another piece of code calls update_option(). Without this, saving one tab
+     * would blank every field the form did not render, since an unchecked checkbox and an
+     * unrendered field are equally absent from the submitted data.
      */
     public function sanitize_settings( mixed $input ): array {
-        $sanitized = [];
-        $input     = is_array( $input ) ? $input : [];
+        $input = is_array( $input ) ? $input : [];
+
+        $stored    = get_option( $this->optionName, [] );
+        $sanitized = is_array( $stored ) ? $stored : [];
+
+        // Set by the settings form; null for programmatic writes.
+        $scope = isset( $input['__tab'] ) ? sanitize_key( (string) $input['__tab'] ) : null;
 
         foreach ( $this->tabs as $tab ) {
+            if ( null !== $scope && $tab->id !== $scope ) {
+                continue;
+            }
+
             foreach ( $tab->sections as $section ) {
                 foreach ( $section->fields as $field ) {
+                    // Programmatic write: leave the keys the caller did not supply alone.
+                    if ( null === $scope && ! array_key_exists( $field->id, $input ) ) {
+                        continue;
+                    }
+
                     $raw = $input[ $field->id ] ?? null;
 
                     $sanitized[ $field->id ] = match ( $field->type ) {
                         FieldType::CHECKBOX => ! empty( $raw ),
                         FieldType::NUMBER => is_numeric( $raw ) ? max( 1, (int) $raw ) : 0,
-                        FieldType::URL => esc_url_raw( $raw ),
-                        default => sanitize_text_field( $raw ?? '' ),
+                        FieldType::URL => esc_url_raw( (string) ( $raw ?? '' ) ),
+                        default => sanitize_text_field( (string) ( $raw ?? '' ) ),
                     };
                 }
             }
         }
 
+        unset( $sanitized['__tab'] );
+
         return $sanitized;
     }
 
     /**
-     * Outputs the structural HTML for the entire settings page.
+     * Resolves the index of the tab requested through ?tab=, falling back to the first tab.
+     */
+    private function current_tab_index(): int {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only navigation state.
+        $requested = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+
+        if ( '' !== $requested ) {
+            foreach ( $this->tabs as $index => $tab ) {
+                if ( $tab->id === $requested ) {
+                    return $index;
+                }
+            }
+        }
+
+        return 0;
+    }
+
+    /**
+     * Builds the admin URL of a tab. The first tab owns the bare page URL.
+     */
+    private function tab_url( int $index ): string {
+        $url = menu_page_url( $this->pageId, false );
+
+        if ( empty( $url ) ) {
+            $url = add_query_arg( 'page', $this->pageId, admin_url( $this->parentSlug ) );
+        }
+
+        return 0 === $index ? $url : add_query_arg( 'tab', $this->tabs[ $index ]->id, $url );
+    }
+
+    /**
+     * Outputs the structural HTML for the settings page.
+     *
+     * Tabs are plain links driven by ?tab=, exactly as the core admin screens do it, so the
+     * current tab is linkable, survives Back and Refresh, is returned to after saving, and needs
+     * no JavaScript to be reachable.
      */
     public function render_page(): void {
+        $current = $this->current_tab_index();
+
         echo '<div class="wrap">';
         echo '<h1>' . esc_html( $this->title ) . '</h1>';
 
         if ( count( $this->tabs ) > 1 ) {
-            echo '<h2 class="nav-tab-wrapper">';
+            printf(
+                '<nav class="nav-tab-wrapper wp-clearfix" aria-label="%s">',
+                esc_attr__( 'Secondary menu', 'ks-bootstrapper' )
+            );
+
             foreach ( $this->tabs as $index => $tab ) {
-                $activeClass = $index === 0 ? ' nav-tab-active' : '';
-                echo '<a href="#" class="nav-tab' . esc_attr( $activeClass ) . '" data-tab-index="' . esc_attr( $index ) . '">' . esc_html( $tab->name ) . '</a>';
+                printf(
+                    '<a href="%s" class="nav-tab%s"%s>%s</a>',
+                    esc_url( $this->tab_url( $index ) ),
+                    $index === $current ? ' nav-tab-active' : '',
+                    $index === $current ? ' aria-current="page"' : '',
+                    esc_html( $tab->name )
+                );
             }
-            echo '</h2>';
+
+            echo '</nav>';
         }
 
         echo '<form method="post" action="options.php">';
         settings_fields( $this->pageId );
 
-        foreach ( $this->tabs as $index => $tab ) {
-            $displayStyle = $index === 0 ? 'block' : 'none';
-            echo '<div id="tab-content-' . esc_attr( $index ) . '" class="settings-tab-content" style="display: ' . esc_attr( $displayStyle ) . ';">';
-            do_settings_sections( $this->pageId . '_tab_' . $index );
-            echo '</div>';
+        if ( isset( $this->tabs[ $current ] ) ) {
+            // Tells sanitize_settings() which tab's fields were actually submitted.
+            printf(
+                '<input type="hidden" name="%s[__tab]" value="%s">',
+                esc_attr( $this->optionName ),
+                esc_attr( $this->tabs[ $current ]->id )
+            );
+
+            do_settings_sections( $this->pageId . '_tab_' . $current );
         }
 
         submit_button();
         echo '</form></div>';
-
-        // JS for tab switching with state preservation
-        ?>
-      <script>
-          document.addEventListener('DOMContentLoaded', () => {
-              const tabs = document.querySelectorAll('.nav-tab');
-              const contents = document.querySelectorAll('.settings-tab-content');
-              const storageKey = 'ks_bootstrapper_active_tab_<?php echo esc_js( $this->pageId ); ?>';
-              let activeIndex = localStorage.getItem(storageKey) || 0;
-
-              function activateTab(index) {
-                  tabs.forEach(t => t.classList.remove('nav-tab-active'));
-                  contents.forEach(c => c.style.display = 'none');
-
-                  if (tabs[index] && contents[index]) {
-                      tabs[index].classList.add('nav-tab-active');
-                      contents[index].style.display = 'block';
-                      localStorage.setItem(storageKey, index);
-                  }
-              }
-
-              tabs.forEach((tab, index) => {
-                  tab.addEventListener('click', (e) => {
-                      e.preventDefault();
-                      activateTab(index);
-                  });
-              });
-
-              activateTab(activeIndex);
-          });
-      </script>
-        <?php
     }
 
 }

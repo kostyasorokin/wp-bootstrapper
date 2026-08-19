@@ -27,7 +27,7 @@ class Cookies {
     #[Hook( 'init', priority: 1 )]
     public function set_referer_cookie(): void {
         // Check if the feature is enabled in settings
-        if ( ! Options::is( 'set_referer_cookie_for_new_users', true ) ) {
+        if ( ! Options::is( 'set_referer_cookie_for_new_users' ) ) {
             return;
         }
 

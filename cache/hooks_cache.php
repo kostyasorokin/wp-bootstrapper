@@ -14,414 +14,607 @@
 defined( 'ABSPATH' ) || exit;
 
 return array (
-  'KonstantinSorokin\\Bootstrapper\\Settings\\Config' => 
+  'version' => '1.0.0',
+  'mtime' => 1787167027,
+  'hooks' => 
   array (
-    0 => 
+    'KonstantinSorokin\\Bootstrapper\\Settings\\Config' => 
     array (
-      'hook' => 'init',
-      'method' => 'register',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'init',
+        'method' => 'register',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Cookies' => 
-  array (
-    0 => 
+    'KonstantinSorokin\\Bootstrapper\\Settings\\Helpers\\Options' => 
     array (
-      'hook' => 'init',
-      'method' => 'set_referer_cookie',
-      'priority' => 1,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'add_option_ks_bootstrapper_options',
+        'method' => 'flush',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'update_option_ks_bootstrapper_options',
+        'method' => 'flush',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'delete_option_ks_bootstrapper_options',
+        'method' => 'flush',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Plugins\\ContactForm7' => 
-  array (
-    0 => 
+    'KonstantinSorokin\\Bootstrapper\\Cookies' => 
     array (
-      'hook' => 'wpcf7_load_css',
-      'method' => 'default_css',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'init',
+        'method' => 'set_referer_cookie',
+        'priority' => 1,
+        'args' => 1,
+      ),
     ),
-    1 => 
+    'KonstantinSorokin\\Bootstrapper\\Plugins\\ContactForm7' => 
     array (
-      'hook' => 'wpcf7_autop_or_not',
-      'method' => 'autop',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'wpcf7_load_css',
+        'method' => 'default_css',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'wpcf7_autop_or_not',
+        'method' => 'autop',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'wpcf7_form_tag',
+        'method' => 'inject_referer_page',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-    2 => 
+    'KonstantinSorokin\\Bootstrapper\\Plugins\\TranslatePress' => 
     array (
-      'hook' => 'wpcf7_form_tag',
-      'method' => 'inject_referer_page',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'wp_enqueue_scripts',
+        'method' => 'dequeue_style',
+        'priority' => 9000,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'trp_beautify_language_name',
+        'method' => 'shorten_language_names',
+        'priority' => 10,
+        'args' => 3,
+      ),
     ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Plugins\\TranslatePress' => 
-  array (
-    0 => 
+    'KonstantinSorokin\\Bootstrapper\\Gutenberg' => 
     array (
-      'hook' => 'wp_enqueue_scripts',
-      'method' => 'dequeue_style',
-      'priority' => 9000,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'wp_loaded',
+        'method' => 'remove_global_styles',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'init',
+        'method' => 'remove_duotone_support',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'init',
+        'method' => 'remove_group_inner_container',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'init',
+        'method' => 'remove_layout_support',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'should_load_separate_core_block_assets',
+        'method' => 'separate_block_assets',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      5 => 
+      array (
+        'hook' => 'wp_enqueue_scripts',
+        'method' => 'dequeue_block_styles',
+        'priority' => 100,
+        'args' => 1,
+      ),
+      6 => 
+      array (
+        'hook' => 'wp_footer',
+        'method' => 'dequeue_block_styles',
+        'priority' => 2,
+        'args' => 1,
+      ),
+      7 => 
+      array (
+        'hook' => 'after_setup_theme',
+        'method' => 'disable_block_patterns',
+        'priority' => 20,
+        'args' => 1,
+      ),
     ),
-    1 => 
+    'KonstantinSorokin\\Bootstrapper\\Files' => 
     array (
-      'hook' => 'trp_beautify_language_name',
-      'method' => 'shorten_language_names',
-      'priority' => 10,
-      'args' => 3,
+      0 => 
+      array (
+        'hook' => 'big_image_size_threshold',
+        'method' => 'big_image_size_threshold',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'sanitize_file_name',
+        'method' => 'clear_file_name',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'upload_mimes',
+        'method' => 'svg_svgz_support',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'wp_handle_upload_prefilter',
+        'method' => 'validate_svg_upload',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'wp_handle_sideload_prefilter',
+        'method' => 'validate_svg_upload',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Gutenberg' => 
-  array (
-    0 => 
+    'KonstantinSorokin\\Bootstrapper\\Theme' => 
     array (
-      'hook' => 'wp_body_open',
-      'method' => 'remove_svg_filters',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'get_the_archive_title_prefix',
+        'method' => 'clean_archive_title_prefix',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-    1 => 
+    'KonstantinSorokin\\Bootstrapper\\JavaScript' => 
     array (
-      'hook' => 'in_admin_header',
-      'method' => 'remove_admin_svg_filters',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'wp_enqueue_scripts',
+        'method' => 'jquery',
+        'priority' => 100,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'wp_default_scripts',
+        'method' => 'jquery_migrate',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'init',
+        'method' => 'oembed_full',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'init',
+        'method' => 'stopHeartbeat',
+        'priority' => 1,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'wp_print_scripts',
+        'method' => 'autosave_script',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      5 => 
+      array (
+        'hook' => 'admin_print_scripts',
+        'method' => 'autosave_script',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-    2 => 
+    'KonstantinSorokin\\Bootstrapper\\Users' => 
     array (
-      'hook' => 'wp_enqueue_scripts',
-      'method' => 'remove_global_styles',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'user_contactmethods',
+        'method' => 'updateContactMethods',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-    3 => 
+    'KonstantinSorokin\\Bootstrapper\\Cron' => 
     array (
-      'hook' => 'init',
-      'method' => 'remove_duotone_support',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'cron_schedules',
+        'method' => 'add_intervals',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-    4 => 
+    'KonstantinSorokin\\Bootstrapper\\Head' => 
     array (
-      'hook' => 'init',
-      'method' => 'remove_group_inner_container',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'init',
+        'method' => 'clean_head',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'init',
+        'method' => 'feed_links',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'init',
+        'method' => 'disable_emojis',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'tiny_mce_plugins',
+        'method' => 'disable_emojis_tinymce',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'wp_resource_hints',
+        'method' => 'disable_emojis_remove_dns_prefetch',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      5 => 
+      array (
+        'hook' => 'widgets_init',
+        'method' => 'remove_recent_comments_style',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      6 => 
+      array (
+        'hook' => 'wp_head',
+        'method' => 'phone_detection',
+        'priority' => 5,
+        'args' => 1,
+      ),
+      7 => 
+      array (
+        'hook' => 'wp_head',
+        'method' => 'geo_region',
+        'priority' => 5,
+        'args' => 1,
+      ),
+      8 => 
+      array (
+        'hook' => 'wp_headers',
+        'method' => 'security_headers',
+        'priority' => 5,
+        'args' => 1,
+      ),
+      9 => 
+      array (
+        'hook' => 'wp_head',
+        'method' => 'content_security_policy',
+        'priority' => 1,
+        'args' => 1,
+      ),
+      10 => 
+      array (
+        'hook' => 'run_wptexturize',
+        'method' => 'run_wptexturize',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
-    5 => 
+    'KonstantinSorokin\\Bootstrapper\\Performance' => 
     array (
-      'hook' => 'init',
-      'method' => 'remove_layout_support',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'wp_should_output_buffer_template_for_enhancement',
+        'method' => 'template_enhancement_buffer',
+        'priority' => 99,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'wp_speculation_rules_configuration',
+        'method' => 'speculation_rules',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'print_scripts_array',
+        'method' => 'defer_frontend_scripts',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'init',
+        'method' => 'rest_link_header',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'wp_omit_loading_attr_threshold',
+        'method' => 'eager_image_count',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      5 => 
+      array (
+        'hook' => 'wp_resource_hints',
+        'method' => 'preconnect_external_hosts',
+        'priority' => 99,
+        'args' => 2,
+      ),
+      6 => 
+      array (
+        'hook' => 'image_editor_output_format',
+        'method' => 'webp_subsizes',
+        'priority' => 10,
+        'args' => 3,
+      ),
+      7 => 
+      array (
+        'hook' => 'wp_editor_set_quality',
+        'method' => 'image_quality',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      8 => 
+      array (
+        'hook' => 'show_admin_bar',
+        'method' => 'frontend_admin_bar',
+        'priority' => 99,
+        'args' => 1,
+      ),
     ),
-    6 => 
+    'KonstantinSorokin\\Bootstrapper\\Backend' => 
     array (
-      'hook' => 'should_load_separate_core_block_assets',
-      'method' => 'disable_separate_assets',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'admin_bar_menu',
+        'method' => 'remove_wp_logo',
+        'priority' => 999,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'update_footer',
+        'method' => 'remove_footer_version',
+        'priority' => 99,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'admin_footer_text',
+        'method' => 'remove_footer_text',
+        'priority' => 99,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'admin_init',
+        'method' => 'remove_welcome_panel',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'admin_menu',
+        'method' => 'register_action_scheduler_menu',
+        'priority' => 9999,
+        'args' => 1,
+      ),
     ),
-    7 => 
+    'KonstantinSorokin\\Bootstrapper\\Security' => 
     array (
-      'hook' => 'wp_enqueue_scripts',
-      'method' => 'dequeue_block_styles',
-      'priority' => 100,
-      'args' => 1,
-    ),
-    8 => 
-    array (
-      'hook' => 'wp_footer',
-      'method' => 'remove_footer_assets',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    9 => 
-    array (
-      'hook' => 'wp_omit_duotone_inline_styles',
-      'method' => 'omit_duotone_styles',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    10 => 
-    array (
-      'hook' => 'init',
-      'method' => 'disable_block_patterns',
-      'priority' => 10,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Files' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'big_image_size_threshold',
-      'method' => 'big_image_size_threshold',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    1 => 
-    array (
-      'hook' => 'sanitize_file_name',
-      'method' => 'clear_file_name',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    2 => 
-    array (
-      'hook' => 'upload_mimes',
-      'method' => 'svg_svgz_support',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    3 => 
-    array (
-      'hook' => 'wp_handle_upload_prefilter',
-      'method' => 'validate_svg_upload',
-      'priority' => 10,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Theme' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'get_the_archive_title',
-      'method' => 'clean_archive_title',
-      'priority' => 10,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\JavaScript' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'wp_enqueue_scripts',
-      'method' => 'jquery',
-      'priority' => 100,
-      'args' => 1,
-    ),
-    1 => 
-    array (
-      'hook' => 'wp_default_scripts',
-      'method' => 'jquery_migrate',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    2 => 
-    array (
-      'hook' => 'init',
-      'method' => 'oembed_full',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    3 => 
-    array (
-      'hook' => 'init',
-      'method' => 'stopHeartbeat',
-      'priority' => 1,
-      'args' => 1,
-    ),
-    4 => 
-    array (
-      'hook' => 'wp_print_scripts',
-      'method' => 'autosave_script',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    5 => 
-    array (
-      'hook' => 'admin_print_scripts',
-      'method' => 'autosave_script',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    6 => 
-    array (
-      'hook' => 'script_loader_tag',
-      'method' => 'set_async_defer_attribute',
-      'priority' => 10,
-      'args' => 3,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Users' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'user_contactmethods',
-      'method' => 'updateContactMethods',
-      'priority' => 10,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Cron' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'cron_schedules',
-      'method' => 'add_intervals',
-      'priority' => 10,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Head' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'init',
-      'method' => 'clean_head',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    1 => 
-    array (
-      'hook' => 'init',
-      'method' => 'disable_emojis',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    2 => 
-    array (
-      'hook' => 'tiny_mce_plugins',
-      'method' => 'disable_emojis_tinymce',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    3 => 
-    array (
-      'hook' => 'wp_resource_hints',
-      'method' => 'disable_emojis_remove_dns_prefetch',
-      'priority' => 10,
-      'args' => 2,
-    ),
-    4 => 
-    array (
-      'hook' => 'widgets_init',
-      'method' => 'remove_recent_comments_style',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    5 => 
-    array (
-      'hook' => 'wp_head',
-      'method' => 'phone_detection',
-      'priority' => 5,
-      'args' => 1,
-    ),
-    6 => 
-    array (
-      'hook' => 'wp_head',
-      'method' => 'geo_region',
-      'priority' => 5,
-      'args' => 1,
-    ),
-    7 => 
-    array (
-      'hook' => 'send_headers',
-      'method' => 'content_security_policy_header',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    8 => 
-    array (
-      'hook' => 'wp_head',
-      'method' => 'content_security_policy',
-      'priority' => 1,
-      'args' => 1,
-    ),
-    9 => 
-    array (
-      'hook' => 'send_headers',
-      'method' => 'x_frame_header',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    10 => 
-    array (
-      'hook' => 'run_wptexturize',
-      'method' => 'run_wptexturize',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    11 => 
-    array (
-      'hook' => 'wp_head',
-      'method' => 'x_frame_options',
-      'priority' => 5,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Backend' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'admin_bar_menu',
-      'method' => 'remove_wp_logo',
-      'priority' => 999,
-      'args' => 1,
-    ),
-    1 => 
-    array (
-      'hook' => 'update_footer',
-      'method' => 'remove_footer_version',
-      'priority' => 99,
-      'args' => 1,
-    ),
-    2 => 
-    array (
-      'hook' => 'admin_footer_text',
-      'method' => 'remove_footer_text',
-      'priority' => 99,
-      'args' => 1,
-    ),
-    3 => 
-    array (
-      'hook' => 'admin_init',
-      'method' => 'remove_welcome_panel',
-      'priority' => 10,
-      'args' => 1,
-    ),
-    4 => 
-    array (
-      'hook' => 'admin_menu',
-      'method' => 'register_action_scheduler_menu',
-      'priority' => 9999,
-      'args' => 1,
-    ),
-  ),
-  'KonstantinSorokin\\Bootstrapper\\Security' => 
-  array (
-    0 => 
-    array (
-      'hook' => 'init',
-      'method' => 'bootstrap',
-      'priority' => 1,
-      'args' => 1,
-    ),
-    1 => 
-    array (
-      'hook' => 'template_redirect',
-      'method' => 'block_author_enumeration',
-      'priority' => 0,
-      'args' => 1,
-    ),
-    2 => 
-    array (
-      'hook' => 'redirect_canonical',
-      'method' => 'disable_author_enumeration_canonical',
-      'priority' => 10,
-      'args' => 2,
-    ),
-    3 => 
-    array (
-      'hook' => 'ks_bootstrapper_security_daily',
-      'method' => 'daily_maintenance',
-      'priority' => 10,
-      'args' => 1,
+      0 => 
+      array (
+        'hook' => 'init',
+        'method' => 'bootstrap',
+        'priority' => 1,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'template_redirect',
+        'method' => 'block_author_enumeration',
+        'priority' => 0,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'redirect_canonical',
+        'method' => 'disable_author_enumeration_canonical',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      3 => 
+      array (
+        'hook' => 'do_redirect_guess_404_permalink',
+        'method' => 'disable_redirect_guess',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'rest_pre_dispatch',
+        'method' => 'restrict_rest_users',
+        'priority' => 10,
+        'args' => 3,
+      ),
+      5 => 
+      array (
+        'hook' => 'wp_sitemaps_add_provider',
+        'method' => 'remove_users_sitemap_provider',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      6 => 
+      array (
+        'hook' => 'wpseo_sitemap_exclude_author',
+        'method' => 'exclude_authors_from_sitemap',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      7 => 
+      array (
+        'hook' => 'xmlrpc_enabled',
+        'method' => 'disable_xmlrpc',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      8 => 
+      array (
+        'hook' => 'xmlrpc_methods',
+        'method' => 'disable_xmlrpc_methods',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      9 => 
+      array (
+        'hook' => 'wp_headers',
+        'method' => 'remove_pingback_header',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      10 => 
+      array (
+        'hook' => 'pings_open',
+        'method' => 'close_pings',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      11 => 
+      array (
+        'hook' => 'wp_is_application_passwords_available',
+        'method' => 'disable_application_passwords',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      12 => 
+      array (
+        'hook' => 'wp_login_errors',
+        'method' => 'generic_login_errors',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      13 => 
+      array (
+        'hook' => 'authenticate',
+        'method' => 'throttle_login',
+        'priority' => 30,
+        'args' => 3,
+      ),
+      14 => 
+      array (
+        'hook' => 'wp_login_failed',
+        'method' => 'count_failed_login',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      15 => 
+      array (
+        'hook' => 'wp_login',
+        'method' => 'clear_login_throttle',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      16 => 
+      array (
+        'hook' => 'pre_http_request',
+        'method' => 'block_browse_happy',
+        'priority' => 10,
+        'args' => 3,
+      ),
+      17 => 
+      array (
+        'hook' => 'wp_dashboard_setup',
+        'method' => 'remove_browser_nag_widget',
+        'priority' => 99,
+        'args' => 1,
+      ),
+      18 => 
+      array (
+        'hook' => 'wp_generate_attachment_metadata',
+        'method' => 'strip_upload_metadata',
+        'priority' => 99,
+        'args' => 3,
+      ),
+      19 => 
+      array (
+        'hook' => 'admin_notices',
+        'method' => 'uploads_purge_notice',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      20 => 
+      array (
+        'hook' => 'admin_init',
+        'method' => 'dismiss_uploads_purge_notice',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      21 => 
+      array (
+        'hook' => 'ks_bootstrapper_security_daily',
+        'method' => 'daily_maintenance',
+        'priority' => 10,
+        'args' => 1,
+      ),
     ),
   ),
 );

@@ -63,23 +63,25 @@ class JavaScript {
     }
 
     /**
-     * Completely disables oEmbed functionality (scripts, links, and API).
-     * * Even though this removes discovery links (HTML), we keep it here
-     * to have a single "oEmbed killer" method alongside JS optimizations.
+     * oEmbed functionality (host script, discovery link, REST route, provider discovery).
+     * * The switch follows the same convention as its neighbours: enabled keeps
+     * the feature, disabled strips it out. Even though this removes a discovery
+     * link (HTML), we keep it here to have a single "oEmbed killer" method
+     * alongside JS optimizations.
      */
     #[Hook( 'init' )]
     public function oembed_full(): void {
-        // If the checkbox is NOT checked, we do nothing and return.
-        if ( ! Options::is( 'oembed_full', true ) ) {
+        // If the checkbox is checked, oEmbed stays exactly as WordPress ships it.
+        if ( Options::is( 'oembed_full', true ) ) {
             return;
         }
 
         // 1. Stop the host JS (wp-embed.min.js) from loading in the footer/head
         remove_action( 'wp_head', 'wp_oembed_add_host_js' );
 
-        // 2. Remove oEmbed discovery links (REST API & XML-RPC)
+        // 2. Remove the oEmbed discovery link. Dropping the priority 10 copy also
+        // neutralises the priority 4 one, which short-circuits without it.
         remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
-        remove_action( 'wp_head', 'rest_output_link_wp_head', 10 );
 
         // 3. Disable the oEmbed-specific REST API routes
         remove_action( 'rest_api_init', 'wp_oembed_register_route' );
@@ -110,32 +112,6 @@ class JavaScript {
     #[Hook( 'wp_print_scripts' )]
     #[Hook( 'admin_print_scripts' )]
     public function autosave_script(): void {
-        ! Options::is( 'autosave_script' ) && wp_deregister_script( 'autosave' );
-    }
-
-    /**
-     * Adds async and defer attributes to specific script tags.
-     *
-     * @param string $tag    The original script tag.
-     *
-     * @param string $handle The script's registered handle.
-     * @param string $src    The script's source URL.
-     *
-     * @return string Modified or original script tag.
-     */
-    #[Hook( 'script_loader_tag', priority: 10, accepted_args: 3 )]
-    public function set_async_defer_attribute( string $tag, string $handle, string $src ): string {
-        // Do not work in the admin panel to avoid breaking the editor scripts
-        if ( is_admin() ) {
-            return $tag;
-        }
-        // List of script handles to be loaded asynchronously
-        $async_scripts = [ 'main', 'index', 'wp-embed' ];
-
-        if ( in_array( $handle, $async_scripts, true ) ) {
-            return str_replace( '<script ', '<script async defer ', $tag );
-        }
-
-        return $tag;
+        ! Options::is( 'autosave_script', true ) && wp_deregister_script( 'autosave' );
     }
 }

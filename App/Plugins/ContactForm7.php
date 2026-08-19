@@ -79,14 +79,35 @@ class ContactForm7 {
         $raw_referer = wp_get_raw_referer();
         $referer     = is_string( $raw_referer ) ? esc_url_raw( $raw_referer ) : '';
 
-        if ( '' === $referer || ! wp_http_validate_url( $referer ) ) {
+        if ( '' === $referer || ! $this->is_http_url( $referer ) ) {
             return $form_tag;
         }
 
-        $form_tag['values']   ??= [];
-        $form_tag['values'][] = $referer;
+        if ( ! isset( $form_tag['values'] ) || ! is_array( $form_tag['values'] ) ) {
+            $form_tag['values'] = [];
+        }
+
+        // Contact Form 7 renders the first value of a hidden tag, so the referer has to lead.
+        array_unshift( $form_tag['values'], $referer );
 
         return $form_tag;
+    }
+
+    /**
+     * Checks whether a string is an absolute HTTP or HTTPS URL.
+     *
+     * @param string $url The URL to inspect.
+     *
+     * @return bool
+     */
+    private function is_http_url( string $url ): bool {
+        $parts = wp_parse_url( $url );
+
+        if ( ! is_array( $parts ) || empty( $parts['host'] ) ) {
+            return false;
+        }
+
+        return in_array( strtolower( (string) ( $parts['scheme'] ?? '' ) ), [ 'http', 'https' ], true );
     }
 
     /**

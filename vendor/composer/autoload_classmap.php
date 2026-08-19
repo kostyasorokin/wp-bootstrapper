@@ -16,6 +16,7 @@ return array(
     'KonstantinSorokin\\Bootstrapper\\Gutenberg' => $baseDir . '/App/Gutenberg.php',
     'KonstantinSorokin\\Bootstrapper\\Head' => $baseDir . '/App/Head.php',
     'KonstantinSorokin\\Bootstrapper\\JavaScript' => $baseDir . '/App/JavaScript.php',
+    'KonstantinSorokin\\Bootstrapper\\Performance' => $baseDir . '/App/Performance.php',
     'KonstantinSorokin\\Bootstrapper\\Plugins\\ContactForm7' => $baseDir . '/App/Plugins/ContactForm7.php',
     'KonstantinSorokin\\Bootstrapper\\Plugins\\TranslatePress' => $baseDir . '/App/Plugins/TranslatePress.php',
     'KonstantinSorokin\\Bootstrapper\\Security' => $baseDir . '/App/Security.php',

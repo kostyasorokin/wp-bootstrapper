@@ -23,6 +23,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin Constants
  */
+define( 'KS_BOOTSTRAPPER_VERSION', '1.0.0' );
 define( 'KS_BOOTSTRAPPER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KS_BOOTSTRAPPER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'KS_BOOTSTRAPPER_OPTION_PREFIX', '_ks_bootstrapper_' );
@@ -55,14 +56,11 @@ add_action( 'plugins_loaded', function (): void {
     if ( file_exists( $composerAutoload ) ) {
         require_once $composerAutoload;
 
-        // Enable cache regeneration only if WP_DEBUG is enabled
-        $isDebug = defined( 'WP_DEBUG' ) && WP_DEBUG;
-
         $manager = new \KonstantinSorokin\Bootstrapper\Core\Manager(
             appDir: __DIR__ . '/App',
             namespacePrefix: 'KonstantinSorokin\\Bootstrapper\\',
-            cacheFile: __DIR__ . '/cache/hooks_cache.php', // Ensure the 'cache' folder exists and is writable
-            isDebug: $isDebug
+            cacheFile: __DIR__ . '/cache/hooks_cache.php', // Recreated automatically when the sources change
+            version: KS_BOOTSTRAPPER_VERSION
         );
 
         $manager->boot();
@@ -82,6 +80,11 @@ add_action( 'plugins_loaded', function (): void {
  */
 register_activation_hook( __FILE__, static function (): void {
     add_option( 'ks_bootstrapper_flush_rewrite_rules_flag', true );
+
+    // Drops the seeding stamp so the next request writes every declared default
+    // that has never been saved into ks_bootstrapper_options.
+    delete_option( 'ks_bootstrapper_options_version' );
+
     \KonstantinSorokin\Bootstrapper\Security::activate();
 } );
 

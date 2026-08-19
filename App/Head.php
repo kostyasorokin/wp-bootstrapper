@@ -32,24 +32,35 @@ class Head {
         // Removes RSD (Really Simple Discovery)
         Options::is( 'disable_rsd_link', true ) && remove_action( 'wp_head', 'rsd_link' );
 
-        // Removes Windows Live Writer manifest
-        Options::is( 'disable_wlwmanifest_link', true ) && remove_action( 'wp_head', 'wlwmanifest_link' );
-
         // Removes the short link from head and HTTP headers
         if ( Options::is( 'disable_wp_shortlink', true ) ) {
             remove_action( 'wp_head', 'wp_shortlink_wp_head', 10 );
             remove_action( 'template_redirect', 'wp_shortlink_header', 11 );
         }
+    }
 
-        // RSS Feed Links support.
-        // If the option is disabled in settings, we remove theme support for RSS feeds.
-        if ( ! Options::is( 'automatic_feed_links' ) ) {
-            remove_theme_support( 'automatic-feed-links' );
+    /**
+     * Turns RSS feed discovery links in the <head> on or off.
+     * * Core registers feed_links() and feed_links_extra() unconditionally, but both
+     * return early unless the active theme declares 'automatic-feed-links' support.
+     * Removing callbacks can therefore only ever take links away, so the enabled
+     * branch has to declare that theme support itself.
+     *
+     * @return void
+     */
+    #[Hook( 'init' )]
+    public function feed_links(): void {
+        if ( Options::is( 'automatic_feed_links', true ) ) {
+            add_theme_support( 'automatic-feed-links' );
 
-            // Additionally, we remove links to category and comment feeds
-            remove_action( 'wp_head', 'feed_links_extra', 3 );
-            remove_action( 'wp_head', 'feed_links', 2 );
+            return;
         }
+
+        remove_theme_support( 'automatic-feed-links' );
+
+        // Additionally, we remove links to category and comment feeds
+        remove_action( 'wp_head', 'feed_links_extra', 3 );
+        remove_action( 'wp_head', 'feed_links', 2 );
     }
 
     /**
@@ -138,7 +149,7 @@ class Head {
      */
     #[Hook( 'wp_head', priority: 5 )]
     public function phone_detection(): void {
-        if ( Options::is( 'phone_detection' ) ) {
+        if ( Options::is( 'phone_detection', true ) ) {
             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo '<meta name="format-detection" content="telephone=no">' . PHP_EOL;
         }
@@ -162,32 +173,107 @@ class Head {
     }
 
     /**
-     * Sends Content-Security-Policy (CSP) HTTP header.
-     * Restricts resource loading to the site's own origin only.
+     * Adds the clickjacking and Content-Security-Policy headers to the response.
+     * * Runs on 'wp_headers' rather than on the later 'send_headers' action on purpose.
+     * The Customizer relaxes both headers for its preview iframe through the very same
+     * filter at the default priority, so answering earlier lets core keep the last word
+     * and the theme preview pane still loads.
+     *
+     * @param array $headers Associative array of headers to be sent.
+     *
+     * @return array
      */
-    #[Hook( 'send_headers' )]
-    public function content_security_policy_header(): void {
-        Options::is( 'content_security_policy' ) && header( "Content-Security-Policy: default-src 'self'" );
+    #[Hook( 'wp_headers', priority: 5 )]
+    public function security_headers( array $headers ): array {
+        if ( Options::is( 'x_frame_options', true ) ) {
+            $headers['X-Frame-Options'] = 'DENY';
+        }
+
+        if ( Options::is( 'content_security_policy' ) ) {
+            $name = Options::is( 'content_security_policy_report_only' )
+                ? 'Content-Security-Policy-Report-Only'
+                : 'Content-Security-Policy';
+
+            $headers[ $name ] = $this->content_security_policy_value();
+        }
+
+        return $headers;
     }
 
     /**
-     * Secures content by preventing resource loading from external sources.
-     * WARNING: 'default-src self' may block external fonts, scripts, or maps.
+     * Repeats the Content-Security-Policy as a meta tag.
+     * * Browsers honour the policy in a meta tag, which keeps it working on hosts and
+     * proxies that strip unknown response headers. Report-only mode has no meta form,
+     * so the tag is withheld there instead of quietly enforcing what should only be
+     * reported.
      */
     #[Hook( 'wp_head', priority: 1 )]
     public function content_security_policy(): void {
-        if ( Options::is( 'content_security_policy' ) ) {
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            echo '<meta http-equiv="Content-Security-Policy" content="default-src \'self\'">' . PHP_EOL;
+        if ( ! Options::is( 'content_security_policy' ) || Options::is( 'content_security_policy_report_only' ) ) {
+            return;
         }
+
+        printf(
+            '<meta http-equiv="Content-Security-Policy" content="%s">%s',
+            esc_attr( $this->content_security_policy_value() ),
+            PHP_EOL
+        );
     }
 
     /**
-     * Set X-Frame-Options header before any output.
+     * Builds the Content-Security-Policy the site is served with.
+     * * The baseline is deliberately one a stock WordPress survives: core, the block
+     * editor and most plugins print inline <style> and <script> blocks, so both are
+     * allowed. Everything hosted elsewhere — analytics, embeds, web fonts — has to be
+     * named in the additional sources setting or added through the filter below.
+     *
+     * @return string
      */
-    #[Hook( 'send_headers' )]
-    public function x_frame_header(): void {
-        Options::is( 'x_frame_options' ) && header( 'X-Frame-Options: DENY' );
+    private function content_security_policy_value(): string {
+        $extra = $this->content_security_policy_sources();
+        $self  = [ "'self'" ];
+
+        $directives = [
+            'default-src' => $self,
+            'script-src'  => array_merge( $self, [ "'unsafe-inline'" ], $extra ),
+            'style-src'   => array_merge( $self, [ "'unsafe-inline'" ], $extra ),
+            'img-src'     => array_merge( $self, [ 'data:' ], $extra ),
+            'font-src'    => array_merge( $self, [ 'data:' ], $extra ),
+            'connect-src' => array_merge( $self, $extra ),
+            'frame-src'   => array_merge( $self, $extra ),
+            'base-uri'    => $self,
+            'form-action' => $self,
+        ];
+
+        $policy = [];
+
+        foreach ( $directives as $directive => $sources ) {
+            $policy[] = $directive . ' ' . implode( ' ', $sources );
+        }
+
+        /**
+         * Filters the Content-Security-Policy sent by the plugin.
+         *
+         * @param string $policy The complete policy, directives separated by semicolons.
+         */
+        return (string) apply_filters( 'ks_bootstrapper_csp', implode( '; ', $policy ) );
+    }
+
+    /**
+     * Reads the extra origins the site owner allowed in the settings.
+     * * Values are separated by spaces, commas or line breaks. Semicolons are dropped
+     * so that a stray one cannot smuggle an extra directive into the policy.
+     *
+     * @return array
+     */
+    private function content_security_policy_sources(): array {
+        $raw = trim( str_replace( ';', ' ', (string) Options::get( 'content_security_policy_sources', '' ) ) );
+
+        if ( '' === $raw ) {
+            return [];
+        }
+
+        return array_values( array_filter( (array) preg_split( '/[\s,]+/', $raw ) ) );
     }
 
     /**
@@ -200,20 +286,6 @@ class Head {
     #[Hook( 'run_wptexturize' )]
     public function run_wptexturize( bool $run ): bool {
         return Options::is( 'disable_wptexturize' ) ? false : $run;
-    }
-
-    /**
-     * Add X-Frame-Options meta tag as a fallback.
-     *
-     * Prevents embedding the page in an iframe for security.
-     * Protects the site against clickjacking attacks.
-     */
-    #[Hook( 'wp_head', priority: 5 )]
-    public function x_frame_options(): void {
-        if ( Options::is( 'x_frame_options' ) ) {
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-            echo '<meta http-equiv="X-Frame-Options" content="DENY">' . PHP_EOL;
-        }
     }
 
 }

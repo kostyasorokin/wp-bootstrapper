@@ -20,7 +20,10 @@ defined( 'ABSPATH' ) || exit;
 class Users {
 
     /**
-     * Updates the available contact methods in the user profile.
+     * Adds the social contact methods to the user profile.
+     *
+     * Methods contributed by the theme or by other plugins are preserved; only keys
+     * of the same name are overwritten.
      *
      * @param array $methods Existing contact methods.
      *
@@ -28,7 +31,7 @@ class Users {
      */
     #[Hook( 'user_contactmethods' )]
     public function updateContactMethods( array $methods ): array {
-        return [
+        return array_merge( $methods, [
             'x'                => 'X',
             'linkedin'         => 'LinkedIn',
             'youtube'          => 'YouTube',
@@ -37,7 +40,7 @@ class Users {
             'telegram'         => 'Telegram',
             'telegram_channel' => 'Telegram ' . __( 'channel', 'ks-bootstrapper' ),
             'telegram_group'   => 'Telegram ' . __( 'group', 'ks-bootstrapper' ),
-        ];
+        ] );
     }
 
 }
