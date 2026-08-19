@@ -1,6 +1,6 @@
 {
   "name": "ks-bootstrapper",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A high-performance, attribute-driven foundation for WordPress. Streamlines site optimization, security hardening, and admin UI cleanup via a modern PHP 8.4+ architecture.",
   "homepage": "https://github.com/kostyasorokin/wp-ks-bootstrapper#readme",
   "license": "GPL-3.0-or-later",

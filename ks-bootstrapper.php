@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KS Bootstrapper
  * Description: Foundational set of tools to initialize and optimize WordPress.
- * Version: 1.0.0
+ * Version: 2.0.0
  * Author: Konstantin Sorokin
  * Author URI: https://konstantinsorokin.com
  * Text Domain: ks-bootstrapper
