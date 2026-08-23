@@ -31,6 +31,7 @@ class ComposerStaticInit284d67cd56f4336f1da32113768141b9
         'KonstantinSorokin\\Bootstrapper\\Gutenberg' => __DIR__ . '/../..' . '/App/Gutenberg.php',
         'KonstantinSorokin\\Bootstrapper\\Head' => __DIR__ . '/../..' . '/App/Head.php',
         'KonstantinSorokin\\Bootstrapper\\JavaScript' => __DIR__ . '/../..' . '/App/JavaScript.php',
+        'KonstantinSorokin\\Bootstrapper\\Manifest' => __DIR__ . '/../..' . '/App/Manifest.php',
         'KonstantinSorokin\\Bootstrapper\\Performance' => __DIR__ . '/../..' . '/App/Performance.php',
         'KonstantinSorokin\\Bootstrapper\\Plugins\\ContactForm7' => __DIR__ . '/../..' . '/App/Plugins/ContactForm7.php',
         'KonstantinSorokin\\Bootstrapper\\Plugins\\TranslatePress' => __DIR__ . '/../..' . '/App/Plugins/TranslatePress.php',

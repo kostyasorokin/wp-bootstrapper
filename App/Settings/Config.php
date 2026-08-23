@@ -291,6 +291,42 @@ class Config {
                         'default'     => '',
                     ] );
                 } );
+                $tab->add_section( 'head_manifest', __( 'Web app manifest', 'ks-bootstrapper' ), '', function ( Section $section ) {
+                    $section->add_field( 'web_app_manifest', FieldType::CHECKBOX, [
+                        'label'          => 'manifest.json',
+                        'label_checkbox' => __( 'Serve a web app manifest', 'ks-bootstrapper' ),
+                        'description'    => __( 'Publishes /manifest.json and links it from the head, so the site can be installed as an app: name and icon on an iOS or Android home screen, "Add to Dock" in Safari on macOS, a splash screen while it launches. The document is assembled from WordPress — title, tagline, language and the Site Icon — so there is nothing to keep in step by hand. It does not colour the browser chrome of an ordinary tab.', 'ks-bootstrapper' ),
+                        'default'        => false,
+                    ] );
+                    $section->add_field( 'manifest_short_name', FieldType::TEXT, [
+                        'label'       => 'short_name',
+                        'description' => __( 'Name under the icon on a home screen. Left empty, the site title is used — worth filling in only when that title is longer than about twelve characters, which is where home screens start truncating.', 'ks-bootstrapper' ),
+                        'default'     => '',
+                    ] );
+                    $section->add_field( 'manifest_display', FieldType::SELECT, [
+                        'label'       => 'display',
+                        'description' => __( 'How much browser interface the installed app keeps.', 'ks-bootstrapper' ),
+                        'options'     => [
+                            'standalone' => __( 'Standalone — its own window, no address bar', 'ks-bootstrapper' ),
+                            'minimal-ui' => __( 'Minimal UI — its own window with navigation controls', 'ks-bootstrapper' ),
+                            'fullscreen' => __( 'Fullscreen — no interface at all', 'ks-bootstrapper' ),
+                            'browser'    => __( 'Browser — an ordinary tab', 'ks-bootstrapper' ),
+                        ],
+                        'default'     => 'standalone',
+                    ] );
+                    $section->add_field( 'manifest_theme_color', FieldType::TEXT, [
+                        'label'       => 'theme_color',
+                        'description' => __( 'Chrome of the installed app window, as a hex colour. Chrome and Android also read it for the browser toolbar of an ordinary tab; Safari 26 reads it nowhere — there the toolbar takes its tint from CSS, the background colour of a fixed or sticky element near the top edge, then body, then html.', 'ks-bootstrapper' ),
+                        'placeholder' => '#ffffff',
+                        'default'     => '',
+                    ] );
+                    $section->add_field( 'manifest_background_color', FieldType::TEXT, [
+                        'label'       => 'background_color',
+                        'description' => __( 'Splash screen shown while the installed app starts, as a hex colour. Set it to the page background: left empty the platform paints white, and the app opens with a white flash before it darkens to the site.', 'ks-bootstrapper' ),
+                        'placeholder' => '#ffffff',
+                        'default'     => '',
+                    ] );
+                } );
             } )
             ->add_tab( 'security', __( 'Security', 'ks-bootstrapper' ), function ( Tab $tab ) {
                 $tab->add_section( 'security_main', '', '', function ( Section $section ) {

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 
 return array (
   'version' => '2.0.0',
-  'mtime' => 1787170871,
+  'mtime' => 1787478695,
   'hooks' => 
   array (
     'KonstantinSorokin\\Bootstrapper\\Settings\\Config' => 
@@ -252,6 +252,44 @@ return array (
         'hook' => 'admin_print_scripts',
         'method' => 'autosave_script',
         'priority' => 10,
+        'args' => 1,
+      ),
+    ),
+    'KonstantinSorokin\\Bootstrapper\\Manifest' => 
+    array (
+      0 => 
+      array (
+        'hook' => 'init',
+        'method' => 'rewrite',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      1 => 
+      array (
+        'hook' => 'query_vars',
+        'method' => 'query_var',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      2 => 
+      array (
+        'hook' => 'init',
+        'method' => 'flush_when_needed',
+        'priority' => 999,
+        'args' => 1,
+      ),
+      3 => 
+      array (
+        'hook' => 'template_redirect',
+        'method' => 'render',
+        'priority' => 10,
+        'args' => 1,
+      ),
+      4 => 
+      array (
+        'hook' => 'wp_head',
+        'method' => 'link',
+        'priority' => 2,
         'args' => 1,
       ),
     ),
