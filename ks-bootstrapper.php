@@ -2,7 +2,7 @@
 /**
  * Plugin Name: KS Bootstrapper
  * Description: Foundational set of tools to initialize and optimize WordPress.
- * Version: 2.0.0
+ * Version: 2.1.0
  * Author: Konstantin Sorokin
  * Author URI: https://konstantinsorokin.com
  * Text Domain: ks-bootstrapper
@@ -23,7 +23,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin Constants
  */
-define( 'KS_BOOTSTRAPPER_VERSION', '2.0.0' );
+define( 'KS_BOOTSTRAPPER_VERSION', '2.1.0' );
 define( 'KS_BOOTSTRAPPER_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'KS_BOOTSTRAPPER_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'KS_BOOTSTRAPPER_OPTION_PREFIX', '_ks_bootstrapper_' );
