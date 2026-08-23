@@ -14,8 +14,8 @@
 defined( 'ABSPATH' ) || exit;
 
 return array (
-  'version' => '2.0.0',
-  'mtime' => 1787478695,
+upd  'version' => '2.1.0',
+  'mtime' => 1787479353,
   'hooks' => 
   array (
     'KonstantinSorokin\\Bootstrapper\\Settings\\Config' => 
@@ -280,12 +280,19 @@ return array (
       ),
       3 => 
       array (
+        'hook' => 'redirect_canonical',
+        'method' => 'no_canonical_redirect',
+        'priority' => 10,
+        'args' => 2,
+      ),
+      4 => 
+      array (
         'hook' => 'template_redirect',
         'method' => 'render',
         'priority' => 10,
         'args' => 1,
       ),
-      4 => 
+      5 => 
       array (
         'hook' => 'wp_head',
         'method' => 'link',
